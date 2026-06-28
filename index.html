@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Docente - Jornada de Formación</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-intro: #f1f3f5;
+            --bg-footer: #1a1d24;
+            --red-accent: #e03030;
+            --red-hover: #c22020;
+            --text-main: #1a1d24;
+            --text-muted: #5c6370;
+            --text-dark: #adb5bd;
+            --border-subtle: rgba(0,0,0,0.06);
+            --font-ui: 'Inter', sans-serif;
+            --font-body: 'Roboto', sans-serif;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body { background-color: var(--bg-main); color: var(--text-main); font-family: var(--font-body); margin: 0; padding: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        h1, h2, h3, h4 { font-family: var(--font-ui); }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%; z-index: 1000;
+            background-color: rgba(248,249,250,0.8);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: background-color 0.3s ease, border-bottom 0.3s ease, box-shadow 0.3s ease;
+        }
+        .navbar.scrolled {
+            background-color: rgba(255,255,255,0.95);
+            border-bottom: 1px solid var(--border-subtle);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+        .nav-logo { font-size: 1.4rem; font-weight: 900; color: var(--text-main); text-decoration: none; letter-spacing: -0.5px; font-family: var(--font-ui); }
+        .nav-logo span { color: var(--red-accent); }
+        .nav-menu { display: flex; gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
+        .nav-link { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; font-family: var(--font-ui); transition: color 0.25s ease; }
+        .nav-link:hover { color: var(--red-accent); }
+        .menu-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; }
+        .menu-toggle span { display: block; width: 25px; height: 2px; background-color: var(--text-main); transition: 0.3s; }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 88vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            padding: 140px 20px 80px; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 40%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(224,48,48,0.06) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        .hero > * { position: relative; z-index: 1; }
+
+        .hero-badge {
+            background-color: rgba(224,48,48,0.08); color: var(--red-accent);
+            border: 1px solid rgba(224,48,48,0.15); padding: 6px 16px;
+            border-radius: 50px; font-size: 0.82rem; font-weight: 700;
+            font-family: var(--font-ui); letter-spacing: 0.5px; margin-bottom: 1.75rem;
+        }
+        .hero h1 {
+            font-size: 3.8rem; font-weight: 900; line-height: 1.1;
+            max-width: 900px; margin: 0 0 1.5rem; letter-spacing: -1.5px;
+            color: var(--text-main);
+        }
+        .hero h1 span { color: var(--red-accent); }
+        .hero p {
+            font-size: 1.2rem; color: var(--text-muted); max-width: 580px;
+            margin: 0 0 2.5rem; line-height: 1.6;
+        }
+        .btn-cta {
+            background-color: var(--red-accent); color: #fff;
+            text-decoration: none; padding: 14px 32px; border-radius: 8px;
+            font-family: var(--font-ui); font-weight: 700; font-size: 1rem;
+            display: inline-flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 16px rgba(224,48,48,0.25);
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .btn-cta:hover { background-color: var(--red-hover); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(224,48,48,0.35); }
+
+        /* ── MÉTRICAS ── */
+        .metrics {
+            background-color: var(--bg-intro);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 50px 5%;
+        }
+        .metrics-grid {
+            max-width: 1100px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; text-align: center;
+        }
+        .metric-item { display: flex; flex-direction: column; align-items: center; }
+        .metric-icon { color: var(--red-accent); margin-bottom: 0.75rem; }
+        .metric-title { font-family: var(--font-ui); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .metric-desc { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* ── MÓDULOS ── */
+        .modules-section { padding: 100px 5%; max-width: 1260px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-header h2 { font-size: 2.5rem; font-weight: 900; letter-spacing: -0.5px; margin: 0 0 0.5rem; }
+        .section-header p { color: var(--text-muted); font-size: 1.1rem; max-width: 520px; margin: 0 auto; }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 2rem;
+        }
+
+        /* Cards 1-3: span 2 each = 6 columns */
+        /* Cards 4-5: span 3 each = 6 columns, centradas */
+        .card { grid-column: span 2; }
+        .card:nth-child(4) { grid-column: 2 / span 2; }
+        .card:nth-child(5) { grid-column: 4 / span 2; }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px; padding: 2.5rem 2rem 2rem;
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            text-decoration: none; color: inherit;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .card:hover {
+            transform: translateY(-6px);
+        }
+
+        .card-line {
+            position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            opacity: 0; transition: opacity 0.25s ease;
+        }
+        .card:hover .card-line { opacity: 1; }
+
+        /* Hover shadows per module */
+        .card-p1:hover { box-shadow: 0 12px 30px rgba(224,48,48,0.12); border-color: rgba(224,48,48,0.2); }
+        .card-p2:hover { box-shadow: 0 12px 30px rgba(66,133,244,0.12); border-color: rgba(66,133,244,0.2); }
+        .card-p3:hover { box-shadow: 0 12px 30px rgba(52,168,83,0.12); border-color: rgba(52,168,83,0.2); }
+        .card-p4:hover { box-shadow: 0 12px 30px rgba(251,188,4,0.15); border-color: rgba(251,188,4,0.3); }
+        .card-p5:hover { box-shadow: 0 12px 30px rgba(249,115,22,0.12); border-color: rgba(249,115,22,0.2); }
+
+        .card-num {
+            font-family: var(--font-ui); font-size: 0.8rem; font-weight: 700;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--text-dark); margin-bottom: 1rem;
+        }
+        .card-icon {
+            width: 64px; height: 64px; display: flex; align-items: center;
+            justify-content: center; margin-bottom: 1.25rem;
+        }
+        .card h3 {
+            font-size: 1.25rem; font-weight: 700; margin: 0 0 0.75rem;
+            letter-spacing: -0.3px;
+        }
+        .card p {
+            color: var(--text-muted); font-size: 0.95rem; line-height: 1.55;
+            margin: 0 0 1.75rem; flex-grow: 1; max-width: 260px;
+        }
+        .card-btn {
+            font-family: var(--font-ui); font-weight: 700; font-size: 0.9rem;
+            display: inline-flex; align-items: center; gap: 5px;
+            text-decoration: none; transition: gap 0.2s ease;
+            margin-top: auto;
+        }
+        .card:hover .card-btn { gap: 10px; }
+        .card-p1 .card-btn { color: #e03030; }
+        .card-p2 .card-btn { color: #4285f4; }
+        .card-p3 .card-btn { color: #34a853; }
+        .card-p4 .card-btn { color: #b58500; }
+        .card-p5 .card-btn { color: #f97316; }
+
+        /* ── FOOTER ── */
+        footer {
+            background-color: var(--bg-footer); border-top: 2px solid var(--red-accent);
+            padding: 40px 5%; text-align: center;
+        }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+        .footer-logo { color: var(--red-accent); margin-bottom: 0.25rem; }
+        .footer-school { font-family: var(--font-ui); font-weight: 700; font-size: 1.1rem; color: #fff; }
+        .footer-info { color: rgba(255,255,255,0.4); font-size: 0.9rem; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1023px) {
+            .modules-grid { grid-template-columns: repeat(4,1fr); gap: 1.5rem; }
+            .card { grid-column: span 2 !important; }
+            .hero h1 { font-size: 2.8rem; }
+        }
+        @media (max-width: 767px) {
+            .navbar { padding: 0 20px; background-color: #fff; }
+            .menu-toggle { display: flex; }
+            .nav-menu {
+                position: absolute; top: 70px; left: 0; width: 100%;
+                background-color: rgba(255,255,255,0.98); backdrop-filter: blur(16px);
+                flex-direction: column; padding: 20px; gap: 1.25rem;
+                border-bottom: 1px solid var(--border-subtle);
+                display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            }
+            .nav-menu.active { display: flex; }
+            .hero h1 { font-size: 2.2rem; letter-spacing: -0.5px; }
+            .hero p { font-size: 1.05rem; }
+            .metrics-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .card { grid-column: span 1 !important; padding: 2rem 1.5rem; }
+            .card p { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">IA <span>Docente</span></a>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="prompting.html" class="nav-link">Prompting</a></li>
+            <li><a href="gemini.html" class="nav-link">Gemini</a></li>
+            <li><a href="notebooklm.html" class="nav-link">NotebookLM</a></li>
+            <li><a href="gems.html" class="nav-link">Gems</a></li>
+            <li><a href="imagenes.html" class="nav-link">Imágenes</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="hero-badge">Jornada de Formación · Google Workspace</div>
+        <h1>Transforma tu aula con<br><span>Inteligencia Artificial</span></h1>
+        <p>Optimiza tus tiempos, potencia la personalización del aprendizaje y rediseña tus recursos didácticos de forma ágil.</p>
+        <a href="#modulos" class="btn-cta">
+            Explorar módulos
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+    </header>
+
+    <!-- MÉTRICAS -->
+    <section class="metrics">
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="metric-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </div>
+                <div class="metric-title">5 Módulos</div>
+                <div class="metric-desc">Un itinerario guiado paso a paso</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+                </div>
+                <div class="metric-title">Ecosistema Google</div>
+                <div class="metric-desc">Integración total en tu entorno de trabajo</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="metric-title">100% Práctico</div>
+                <div class="metric-desc">Diseñado por y para docentes en activo</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MÓDULOS -->
+    <main class="modules-section" id="modulos">
+        <div class="section-header">
+            <h2>Módulos de la jornada</h2>
+            <p>Selecciona un módulo para acceder a las guías, recursos y prompts optimizados.</p>
+        </div>
+
+        <div class="modules-grid">
+
+            <!-- MÓDULO 01: PROMPTING -->
+            <a href="prompting.html" class="card card-p1">
+                <div class="card-line" style="background-color:#e03030;"></div>
+                <div class="card-num">01</div>
+                <div class="card-icon" style="color:#e03030;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                </div>
+                <h3>Técnicas de Prompting</h3>
+                <p>Aprende a comunicarte con la IA de forma efectiva. Estructuras, técnicas y patrones para obtener resultados precisos en cualquier tarea educativa.</p>
+                <span class="card-btn">
+                    Ver módulo
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+            </a>
+
+            <!-- MÓDULO 02: GEMINI -->
+            <a href="gemini.html" class="card card-p2">
+                <div class="card-line" style="background-color:#4285f4;"></div>
+                <div class="card-num">02</div>
+                <div class="card-icon" style="color:#4285f4;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M12 3c0 4.5 3.5 9 9 9-5.5 0-9 4.5-9 9 0-4.5-3.5-9-9-9 5.5 0 9-4.5 9-9z"/></svg>
+                </div>
+                <h3>Producción con Gemini</h3>
+                <p>Explora las capacidades de Gemini aplicadas al aula: generación de materiales, corrección automática y planificación didáctica integral.</p>
+                <span class="card-btn">
+                    Ver módulo
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+            </a>
+
+            <!-- MÓDULO 03: NOTEBOOKLM -->
+            <a href="notebooklm.html" class="card card-p3">
+                <div class="card-line" style="background-color:#34a853;"></div>
+                <div class="card-num">03</div>
+                <div class="card-icon" style="color:#34a853;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="10" y2="11"/></svg>
+                </div>
+                <h3>NotebookLM</h3>
+                <p>Convierte documentos y apuntes en una base de conocimiento inteligente. Resúmenes analíticos, preguntas cruzadas y podcasts desde tus materiales.</p>
+                <span class="card-btn">
+                    Ver módulo
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+            </a>
+
+            <!-- MÓDULO 04: GEMS -->
+            <a href="gems.html" class="card card-p4">
+                <div class="card-line" style="background-color:#fbbc04;"></div>
+                <div class="card-num">04</div>
+                <div class="card-icon" style="color:#fbbc04;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3l-3 6 4 12 4-12z"/><path d="M2 9h20"/></svg>
+                </div>
+                <h3>Creación de Gems</h3>
+                <p>Diseña asistentes de IA personalizados: tutores adaptativos, correctores de redacciones o asistentes de evaluación a medida de tu materia.</p>
+                <span class="card-btn">
+                    Ver módulo
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+            </a>
+
+            <!-- MÓDULO 05: IMÁGENES -->
+            <a href="imagenes.html" class="card card-p5">
+                <div class="card-line" style="background-color:#f97316;"></div>
+                <div class="card-num">05</div>
+                <div class="card-icon" style="color:#f97316;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+                <h3>Generación de Imágenes</h3>
+                <p>Crea recursos visuales para el aula con IA generativa: ilustraciones didácticas, infografías conceptuales y diagramas adaptados a tu asignatura.</p>
+                <span class="card-btn">
+                    Ver módulo
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+            </a>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+            </div>
+            <div class="footer-school">Colegio de Fomento Aitana</div>
+            <div class="footer-info">Formación Interna · Google Workspace · 2025–26</div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('navbar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const navMenu = document.getElementById('nav-menu');
+
+            window.addEventListener('scroll', () => {
+                navbar.classList.toggle('scrolled', window.scrollY > 20);
+            });
+
+            menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+
+            document.querySelectorAll('.nav-link').forEach(l => {
+                l.addEventListener('click', () => navMenu.classList.remove('active'));
+            });
+        });
+    </script>
+</body>
+</html>

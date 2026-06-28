@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo 3: Chat con las fuentes - NotebookLM - IA Docente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg-main:#f8f9fa;--bg-card:#ffffff;--bg-intro:#f1f3f5;--bg-footer:#1a1d24;--red-accent:#e03030;--green-accent:#34a853;--green-hover:#2a8c44;--text-main:#1a1d24;--text-muted:#5c6370;--text-dark:#adb5bd;--border-subtle:rgba(0,0,0,0.06);--font-ui:'Inter',sans-serif;--font-body:'Roboto',sans-serif;}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+        html{scroll-behavior:smooth;}
+        body{font-family:var(--font-body);background-color:var(--bg-main);color:var(--text-main);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+        h1,h2,h3,h4{font-family:var(--font-ui);}
+        .navbar{position:fixed;top:0;left:0;width:100%;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;z-index:1000;background-color:rgba(248,249,250,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-subtle);}
+        .nav-logo{font-size:1.4rem;font-weight:900;color:var(--text-main);text-decoration:none;letter-spacing:-0.5px;font-family:var(--font-ui);}
+        .nav-logo span{color:var(--red-accent);}
+        .nav-menu{display:flex;gap:1.5rem;list-style:none;}
+        .nav-link{color:var(--text-muted);text-decoration:none;font-size:0.9rem;font-weight:600;font-family:var(--font-ui);transition:color 0.25s;}
+        .nav-link:hover{color:var(--red-accent);}
+        .nav-link.active-page{color:var(--green-accent);}
+        .menu-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:5px;}
+        .menu-toggle span{display:block;width:25px;height:2px;background-color:var(--text-main);}
+        .breadcrumb-wrap{padding:86px 5% 12px;}
+        .breadcrumb{font-family:var(--font-ui);font-size:0.85rem;color:var(--text-muted);}
+        .breadcrumb a{color:var(--text-muted);text-decoration:none;transition:color 0.2s;}
+        .breadcrumb a:hover{color:var(--green-accent);}
+        .breadcrumb .sep{color:var(--text-dark);margin:0 6px;}
+        .hero{padding:20px 5% 50px;}
+        .badge-mod{display:inline-block;background-color:rgba(52,168,83,0.08);color:var(--green-accent);font-family:var(--font-ui);font-size:0.75rem;font-weight:700;padding:4px 12px;border-radius:50px;margin-bottom:0.75rem;letter-spacing:0.5px;border:1px solid rgba(52,168,83,0.2);}
+        .hero h1{font-size:2.2rem;font-weight:900;margin-bottom:0.4rem;letter-spacing:-0.5px;}
+        .hero .subtitle{font-size:1.1rem;color:var(--text-muted);}
+        .tag-label{font-family:var(--font-ui);font-size:0.75rem;font-weight:700;color:var(--green-accent);letter-spacing:1px;display:block;margin-bottom:0.5rem;}
+        .section-situacion{background-color:var(--bg-intro);padding:50px 5%;}
+        .text-block{color:var(--text-muted);max-width:800px;font-size:1.05rem;line-height:1.7;}
+        .section-steps{background-color:var(--bg-card);padding:60px 5%;}
+        .steps-inner{max-width:860px;margin:0 auto;}
+        .steps-header{margin-bottom:2.5rem;}
+        .steps-header h2{font-size:1.8rem;font-weight:900;margin-bottom:0.5rem;}
+        .steps-header p{color:var(--text-muted);font-size:1rem;line-height:1.6;}
+        .steps-list{display:flex;flex-direction:column;gap:1.25rem;}
+        .step-item{display:flex;gap:1.25rem;align-items:flex-start;background-color:var(--bg-main);border:1px solid var(--border-subtle);border-radius:12px;padding:1.25rem 1.5rem;}
+        .step-num{width:36px;height:36px;border-radius:50%;background-color:rgba(52,168,83,0.1);color:var(--green-accent);font-family:var(--font-ui);font-weight:900;font-size:0.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .step-content h4{font-size:1rem;font-weight:700;margin-bottom:0.3rem;color:var(--text-main);}
+        .step-content p{font-size:0.92rem;color:var(--text-muted);line-height:1.55;margin:0;}
+        .step-note{margin-top:0.5rem;background-color:rgba(52,168,83,0.05);border-left:3px solid var(--green-accent);border-radius:0 6px 6px 0;padding:8px 12px;font-size:0.88rem;color:var(--text-main);line-height:1.5;}
+        /* CHAT DEMO */
+        .section-demo{background-color:var(--bg-intro);padding:60px 5%;}
+        .demo-inner{max-width:860px;margin:0 auto;}
+        .demo-inner h2{font-size:1.8rem;font-weight:900;margin-bottom:0.5rem;}
+        .demo-inner>p{color:var(--text-muted);font-size:1rem;line-height:1.6;margin-bottom:2rem;}
+        .chat-demo{background-color:var(--bg-card);border:1px solid var(--border-subtle);border-radius:14px;overflow:hidden;}
+        .chat-header{background-color:#1a2a1f;padding:0.9rem 1.25rem;display:flex;align-items:center;gap:0.75rem;}
+        .chat-header-dot{width:8px;height:8px;border-radius:50%;background-color:var(--green-accent);}
+        .chat-header-title{font-family:var(--font-ui);font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.8);}
+        .chat-body{padding:1.5rem;display:flex;flex-direction:column;gap:1rem;}
+        .msg{max-width:85%;}
+        .msg-user{align-self:flex-end;background-color:rgba(52,168,83,0.1);border:1px solid rgba(52,168,83,0.2);border-radius:12px 12px 2px 12px;padding:0.75rem 1rem;font-size:0.9rem;color:var(--text-main);}
+        .msg-ai{align-self:flex-start;background-color:var(--bg-main);border:1px solid var(--border-subtle);border-radius:2px 12px 12px 12px;padding:0.75rem 1rem;font-size:0.9rem;color:var(--text-main);}
+        .msg-ai .source-cite{margin-top:0.4rem;font-size:0.78rem;color:var(--green-accent);font-family:var(--font-ui);font-weight:600;}
+        .msg-label{font-family:var(--font-ui);font-size:0.7rem;font-weight:700;letter-spacing:0.5px;margin-bottom:0.3rem;color:var(--text-dark);}
+        .questions-list{display:flex;flex-direction:column;gap:0.75rem;margin-top:2rem;}
+        .q-item{background-color:var(--bg-card);border:1px solid var(--border-subtle);border-left:3px solid var(--green-accent);border-radius:0 10px 10px 0;padding:0.9rem 1.1rem;font-size:0.9rem;color:var(--text-main);font-style:italic;}
+        .section-result{background-color:var(--bg-card);padding:60px 5%;}
+        .result-inner{max-width:860px;margin:0 auto;text-align:center;}
+        .result-inner h2{font-size:1.8rem;font-weight:900;margin-bottom:0.75rem;}
+        .result-inner>p{color:var(--text-muted);font-size:1rem;line-height:1.6;margin-bottom:2rem;max-width:600px;margin-left:auto;margin-right:auto;}
+        .btn-green{background-color:var(--green-accent);color:#fff;padding:14px 32px;border-radius:8px;font-family:var(--font-ui);font-weight:700;font-size:1rem;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;}
+        .btn-green:hover{background-color:var(--green-hover);transform:translateY(-2px);box-shadow:0 6px 20px rgba(52,168,83,0.3);}
+        .back-wrap{text-align:center;margin:40px auto 60px;}
+        .btn-back{border:1px solid var(--border-subtle);background-color:#fff;color:var(--text-muted);padding:10px 24px;border-radius:8px;font-family:var(--font-ui);font-weight:600;text-decoration:none;display:inline-block;transition:all 0.2s;}
+        .btn-back:hover{border-color:var(--green-accent);color:var(--green-accent);}
+        footer{background-color:var(--bg-footer);border-top:2px solid var(--red-accent);padding:40px 5%;text-align:center;}
+        .footer-school{font-family:var(--font-ui);font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:0.25rem;}
+        .footer-info{color:rgba(255,255,255,0.4);font-size:0.9rem;}
+        @media(max-width:767px){.navbar{padding:0 20px;}.menu-toggle{display:flex;}.nav-menu{position:absolute;top:70px;left:0;width:100%;background-color:rgba(255,255,255,0.98);flex-direction:column;padding:20px;gap:1.25rem;border-bottom:1px solid var(--border-subtle);display:none;}.nav-menu.active{display:flex;}.hero h1{font-size:1.8rem;}}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">IA <span>Docente</span></a>
+        <button class="menu-toggle" id="menu-toggle"><span></span><span></span><span></span></button>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="prompting.html" class="nav-link">Prompting</a></li>
+            <li><a href="gemini.html" class="nav-link">Gemini</a></li>
+            <li><a href="notebooklm.html" class="nav-link active-page">NotebookLM</a></li>
+            <li><a href="gems.html" class="nav-link">Gems</a></li>
+            <li><a href="imagenes.html" class="nav-link">Imágenes</a></li>
+        </ul>
+    </nav>
+    <div class="breadcrumb-wrap">
+        <div class="breadcrumb">
+            <a href="index.html">Inicio</a><span class="sep">→</span>
+            <a href="notebooklm.html">NotebookLM</a><span class="sep">→</span>
+            Ejemplo 3 · Chat con las fuentes
+        </div>
+    </div>
+    <header class="hero">
+        <span class="badge-mod">Módulo 03 · Ejemplo 3</span>
+        <h1>Chat con las fuentes</h1>
+        <p class="subtitle">Haz preguntas libres al cuaderno y obtén respuestas con citas exactas de tus documentos</p>
+    </header>
+    <section class="section-situacion">
+        <span class="tag-label">LA SITUACIÓN</span>
+        <p class="text-block">Tienes el PDF de tu unidad en NotebookLM y quieres poder hacer preguntas libres sobre el contenido: buscar una definición concreta, pedir una explicación más sencilla, comparar conceptos o localizar dónde aparece algo en el documento. NotebookLM responde siempre citando la fuente exacta, lo que garantiza fiabilidad total.</p>
+    </section>
+    <section class="section-steps">
+        <div class="steps-inner">
+            <div class="steps-header">
+                <span class="tag-label">CÓMO HACERLO</span>
+                <h2>Paso a paso en NotebookLM</h2>
+                <p>El chat es la función más flexible de NotebookLM. Funciona exactamente como un asistente inteligente que solo sabe lo que tú le has dado a leer.</p>
+            </div>
+            <div class="steps-list">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <h4>Abre el cuaderno y ve al chat</h4>
+                        <p>Accede al cuaderno en <strong>notebooklm.google.com</strong>. El chat está siempre visible en la parte central de la pantalla, debajo del panel de fuentes.</p>
+                        <div class="step-note">💬 El chat recuerda el contexto de la conversación, así que puedes hacer preguntas de seguimiento sin repetir el contexto.</div>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <h4>Escribe tu pregunta con naturalidad</h4>
+                        <p>No necesitas escribir prompts elaborados. Pregunta directamente como lo harías a un compañero que se ha leído el documento. NotebookLM buscará en todas tus fuentes la respuesta más precisa.</p>
+                        <div class="step-note">✏️ Prueba con: <em>"¿Qué diferencia hay entre el quimo y el quilo?"</em> o <em>"Explícame el intercambio gaseoso de forma sencilla"</em> o <em>"¿Qué enfermedades del aparato digestivo aparecen en el documento?"</em></div>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <h4>Revisa las citas de las fuentes</h4>
+                        <p>Cada respuesta del chat incluye referencias numeradas que indican exactamente de qué página o párrafo de tu PDF viene la información. Pulsa en la referencia para ir directamente a ese fragmento.</p>
+                        <div class="step-note">🔍 Esto es especialmente útil cuando el alumno o el docente quiere verificar la respuesta: siempre puedes comprobar la fuente original con un clic.</div>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <h4>Guarda las respuestas como notas</h4>
+                        <p>Si una respuesta del chat te resulta especialmente útil, pulsa <strong>"Guardar como nota"</strong> (icono de pin). Se añadirá automáticamente al panel de notas del cuaderno para que puedas recuperarla después.</p>
+                        <div class="step-note">📌 Las notas guardadas también se pueden exportar a Google Docs o compartir con los alumnos.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section-demo">
+        <div class="demo-inner">
+            <span class="tag-label">EJEMPLO DE CONVERSACIÓN</span>
+            <h2>Así responde NotebookLM</h2>
+            <p>Esta es una muestra de cómo funciona el chat con las fuentes de la Unidad 4 de Biología. Fíjate en cómo cada respuesta cita la fuente exacta.</p>
+            <div class="chat-demo">
+                <div class="chat-header">
+                    <div class="chat-header-dot"></div>
+                    <div class="chat-header-title">NotebookLM · Unidad 4 — Aparatos digestivo y respiratorio</div>
+                </div>
+                <div class="chat-body">
+                    <div class="msg" style="align-self:flex-end;">
+                        <div class="msg-label">TÚ</div>
+                        <div class="msg-user">¿Qué diferencia hay entre el quimo y el quilo?</div>
+                    </div>
+                    <div class="msg" style="align-self:flex-start; max-width:90%;">
+                        <div class="msg-label">NOTEBOOKLM</div>
+                        <div class="msg-ai">El <strong>quimo</strong> es la papilla espesa y ácida que se forma en el estómago al mezclar el bolo alimenticio con el jugo gástrico. Contiene algunos alimentos ya digeridos pero aún no todos los nutrientes están disponibles. El <strong>quilo</strong>, en cambio, se forma en el intestino delgado cuando el quimo se mezcla con la bilis, el jugo pancreático y el jugo intestinal. El quilo es una papilla líquida que contiene ya los nutrientes listos para ser absorbidos, junto con las sustancias que no han podido digerirse.
+                            <div class="source-cite">📄 Fuente: Unidad 4, pág. 40 — "Función del aparato digestivo"</div>
+                        </div>
+                    </div>
+                    <div class="msg" style="align-self:flex-end;">
+                        <div class="msg-label">TÚ</div>
+                        <div class="msg-user">¿Y dónde se produce exactamente la absorción de nutrientes?</div>
+                    </div>
+                    <div class="msg" style="align-self:flex-start; max-width:90%;">
+                        <div class="msg-label">NOTEBOOKLM</div>
+                        <div class="msg-ai">La absorción se produce en las paredes del intestino delgado, que están formadas por miles de pequeñas prolongaciones llamadas <strong>vellosidades intestinales</strong>. Estas vellosidades absorben los nutrientes del quilo y los pasan al interior de los vasos sanguíneos que contienen, para que el aparato circulatorio los distribuya por todo el cuerpo.
+                            <div class="source-cite">📄 Fuente: Unidad 4, pág. 40 — "Absorción"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:2.5rem;">
+                <span class="tag-label">PREGUNTAS QUE PUEDES HACER</span>
+                <p style="color:var(--text-muted);font-size:1rem;margin-bottom:1.25rem;">Prueba estas preguntas en el cuaderno de ejemplo:</p>
+                <div class="questions-list">
+                    <div class="q-item">"¿Cuáles son las enfermedades del aparato respiratorio que aparecen en el documento y cómo se tratan?"</div>
+                    <div class="q-item">"Explícame la ventilación pulmonar como si fuera para un alumno de 12 años"</div>
+                    <div class="q-item">"¿Qué tienen en común la faringe y la epiglotis?"</div>
+                    <div class="q-item">"Haz un resumen de los cuatro aparatos que intervienen en la nutrición"</div>
+                    <div class="q-item">"¿Por qué los alimentos ricos en fibra facilitan la egestión?"</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section-result">
+        <div class="result-inner">
+            <span class="tag-label">RESULTADO ESPERADO</span>
+            <h2>¿Qué obtendrás?</h2>
+            <p>Respuestas precisas, contextualizadas y siempre citadas que provienen exclusivamente de tus documentos — sin información externa ni inventada.</p>
+            <a href="https://notebooklm.google.com/notebook/75dc98ee-46ee-4805-8ef6-01c68438b295" target="_blank" class="btn-green">
+                Abrir cuaderno y probar el chat
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+        </div>
+    </section>
+    <div class="back-wrap"><a href="notebooklm.html" class="btn-back">← Volver a NotebookLM</a></div>
+    <footer>
+        <div class="footer-school">Colegio de Fomento Aitana</div>
+        <div class="footer-info">Formación Interna · Google Workspace · 2025–26</div>
+    </footer>
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+    </script>
+</body>
+</html>

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 05: Generación de Imágenes - IA Docente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@400;500&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f8f9fa; --bg-card: #ffffff; --bg-intro: #f1f3f5; --bg-footer: #1a1d24;
+            --red-accent: #e03030; --purple-accent: #f97316; --purple-hover: #ea6c00;
+            --purple-light: rgba(249,115,22,0.08); --purple-border: rgba(249,115,22,0.2);
+            --text-main: #1a1d24; --text-muted: #5c6370; --text-dark: #adb5bd;
+            --border-subtle: rgba(0,0,0,0.06); --font-ui: 'Inter',sans-serif;
+            --font-body: 'Roboto',sans-serif; --font-mono: 'Roboto Mono',monospace;
+        }
+        *,*::before,*::after{box-sizing:border-box;}
+        html{scroll-behavior:smooth;font-size:16px;}
+        body{background-color:var(--bg-main);color:var(--text-main);font-family:var(--font-body);margin:0;padding:0;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+        h1,h2,h3,h4{font-family:var(--font-ui);}
+
+        /* NAVBAR */
+        .navbar{position:fixed;top:0;left:0;width:100%;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;z-index:1000;background-color:rgba(248,249,250,0.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:background-color 0.3s,border-bottom 0.3s,box-shadow 0.3s;}
+        .navbar.scrolled{background-color:rgba(255,255,255,0.95);border-bottom:1px solid var(--border-subtle);box-shadow:0 4px 20px rgba(0,0,0,0.02);}
+        .nav-logo{font-size:1.4rem;font-weight:900;color:var(--text-main);text-decoration:none;letter-spacing:-0.5px;font-family:var(--font-ui);}
+        .nav-logo span{color:var(--red-accent);}
+        .nav-menu{display:flex;gap:1.5rem;list-style:none;margin:0;padding:0;}
+        .nav-link{color:var(--text-muted);text-decoration:none;font-size:0.9rem;font-weight:600;font-family:var(--font-ui);transition:color 0.25s;}
+        .nav-link:hover{color:var(--red-accent);}
+        .nav-link.active-page{color:var(--purple-accent);}
+        .menu-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:5px;}
+        .menu-toggle span{display:block;width:25px;height:2px;background-color:var(--text-main);}
+
+        /* HERO — misma estética que resto */
+        .hero-sub{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 20px 50px;}
+        .badge-sub{background-color:var(--purple-light);color:var(--purple-accent);border:1px solid var(--purple-border);padding:4px 12px;border-radius:50px;font-size:0.8rem;font-weight:700;font-family:var(--font-ui);letter-spacing:0.5px;margin-bottom:1rem;}
+        .hero-sub h1{font-size:2.5rem;font-weight:900;line-height:1.2;max-width:800px;margin:0 0 0.5rem;letter-spacing:-0.5px;color:var(--text-main);}
+        .hero-sub h1 span{color:var(--purple-accent);}
+        .hero-sub p{font-size:1.1rem;color:var(--text-muted);max-width:650px;margin:0;line-height:1.5;}
+
+        /* UTILIDAD */
+        .utilidad-section{background-color:var(--bg-card);padding:60px 5%;}
+        .utilidad-inner{max-width:1100px;margin:0 auto;}
+        .utilidad-header{text-align:center;margin-bottom:3rem;}
+        .utilidad-header h2{font-size:2rem;font-weight:900;letter-spacing:-0.5px;margin:0 0 0.5rem;}
+        .utilidad-header p{color:var(--text-muted);font-size:1.05rem;max-width:700px;margin:0 auto;line-height:1.7;}
+        .disciplinas-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+        .disciplina-card{background-color:var(--bg-intro);border:1px solid var(--border-subtle);border-radius:12px;padding:1.25rem 1rem;display:flex;flex-direction:column;align-items:center;text-align:center;gap:0.5rem;transition:transform 0.2s,box-shadow 0.2s;}
+        .disciplina-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(196,90,255,0.08);}
+        .disc-emoji{font-size:2rem;line-height:1;}
+        .disc-name{font-family:var(--font-ui);font-weight:700;font-size:0.9rem;color:var(--text-main);}
+        .disc-desc{font-size:0.8rem;color:var(--text-muted);line-height:1.4;}
+
+        /* CÓMO ACCEDER */
+        .acceso-section{background-color:var(--bg-intro);padding:60px 5%;}
+        .acceso-inner{max-width:900px;margin:0 auto;}
+        .acceso-inner h2{font-size:2rem;font-weight:900;letter-spacing:-0.5px;margin:0 0 0.5rem;}
+        .acceso-inner>p{color:var(--text-muted);font-size:1rem;line-height:1.6;margin-bottom:2rem;}
+        .acceso-steps{display:flex;flex-direction:column;gap:1rem;}
+        .acceso-step{display:flex;gap:1rem;align-items:center;background-color:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;padding:1.25rem 1.5rem;}
+        .acceso-num{width:44px;height:44px;border-radius:50%;background-color:var(--purple-light);color:var(--purple-accent);font-family:var(--font-ui);font-weight:900;font-size:1.2rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--purple-border);}
+        .acceso-text h4{font-family:var(--font-ui);font-size:1rem;font-weight:700;margin:0 0 0.25rem;color:var(--text-main);}
+        .acceso-text p{font-size:0.92rem;color:var(--text-muted);line-height:1.55;margin:0;}
+        .step-note{margin-top:0.5rem;background-color:var(--purple-light);border-left:3px solid var(--purple-accent);border-radius:0 6px 6px 0;padding:8px 12px;font-size:0.88rem;color:var(--text-main);line-height:1.5;}
+
+        /* IMPORTANCIA DEL PROMPT */
+        .prompt-section{background-color:var(--bg-card);padding:60px 5%;}
+        .prompt-inner{max-width:900px;margin:0 auto;}
+        .prompt-inner h2{font-size:2rem;font-weight:900;letter-spacing:-0.5px;margin:0 0 0.5rem;}
+        .prompt-inner>p{color:var(--text-muted);font-size:1rem;line-height:1.6;margin-bottom:2rem;}
+        .prompt-tip-box{background:linear-gradient(135deg,#1a0a2e 0%,#2d1060 100%);border-radius:14px;padding:2rem 2.5rem;display:flex;align-items:flex-start;gap:1.25rem;margin-bottom:2rem;}
+        .tip-icon{width:44px;height:44px;background-color:rgba(196,90,255,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--purple-accent);flex-shrink:0;}
+        .tip-text h3{font-family:var(--font-ui);font-size:1rem;font-weight:700;color:#fff;margin:0 0 0.5rem;}
+        .tip-text p{font-size:0.92rem;color:rgba(255,255,255,0.65);line-height:1.65;margin:0;}
+        .tip-text strong{color:rgba(255,255,255,0.9);}
+        .prompt-params{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;}
+        .param-item{background-color:var(--bg-intro);border:1px solid var(--border-subtle);border-radius:10px;padding:1rem 1.25rem;}
+        .param-name{font-family:var(--font-ui);font-weight:700;font-size:0.85rem;color:var(--purple-accent);margin-bottom:0.3rem;}
+        .param-desc{font-size:0.85rem;color:var(--text-muted);line-height:1.5;}
+
+        /* EJEMPLOS GRID */
+        .ejemplos-section{background-color:var(--bg-intro);padding:80px 5%;}
+        .ejemplos-inner{max-width:1200px;margin:0 auto;}
+        .ejemplos-header{text-align:center;margin-bottom:3rem;}
+        .ejemplos-header h2{font-size:2rem;font-weight:900;letter-spacing:-0.5px;margin:0 0 0.5rem;}
+        .ejemplos-header p{color:var(--text-muted);font-size:1.05rem;max-width:600px;margin:0 auto;line-height:1.6;}
+        .ejemplos-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;}
+        .ejemplo-card{background-color:var(--bg-card);border:1px solid var(--border-subtle);border-radius:14px;padding:2rem;position:relative;overflow:hidden;transition:transform 0.25s,box-shadow 0.25s,border-color 0.25s;}
+        .ejemplo-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(196,90,255,0.1);border-color:rgba(196,90,255,0.2);}
+        .ejemplo-top-line{position:absolute;top:0;left:0;width:100%;height:3px;background-color:var(--purple-accent);opacity:0;transition:opacity 0.25s;}
+        .ejemplo-card:hover .ejemplo-top-line{opacity:1;}
+        .ejemplo-type-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-ui);font-size:0.72rem;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:50px;margin-bottom:1rem;}
+        .badge-img{background-color:rgba(249,115,22,0.1);color:var(--purple-accent);border:1px solid rgba(249,115,22,0.2);}
+        .ejemplo-title{font-family:var(--font-ui);font-size:1.15rem;font-weight:700;margin:0 0 0.5rem;color:var(--text-main);}
+        .ejemplo-subtitle{font-size:0.88rem;color:var(--text-muted);margin:0 0 1.25rem;line-height:1.5;}
+        .prompt-label{font-family:var(--font-ui);font-size:0.72rem;font-weight:700;color:var(--purple-accent);letter-spacing:1px;margin-bottom:0.4rem;display:block;}
+        .prompt-box{background-color:var(--bg-intro);border-left:3px solid var(--purple-accent);border-radius:0 8px 8px 0;padding:12px 14px;font-family:var(--font-mono);font-size:0.82rem;line-height:1.65;color:var(--text-main);white-space:pre-wrap;overflow-x:auto;margin-bottom:1rem;}
+        .btn-copy{border:1px solid var(--border-subtle);background-color:#fff;color:var(--text-muted);border-radius:8px;padding:8px 16px;font-family:var(--font-ui);font-weight:600;font-size:0.85rem;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all 0.2s;}
+        .btn-copy:hover{background-color:var(--bg-main);}
+
+        /* CONSEJO FINAL */
+        .consejo-section{background-color:var(--bg-card);padding:60px 5%;}
+        .consejo-inner{max-width:860px;margin:0 auto;}
+        .consejo-banner{background:linear-gradient(135deg,#1a0a2e 0%,#2d1060 100%);border-radius:14px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;}
+        .consejo-text h3{font-family:var(--font-ui);font-size:1.1rem;font-weight:700;color:#fff;margin:0 0 0.5rem;}
+        .consejo-text p{font-size:0.92rem;color:rgba(255,255,255,0.65);line-height:1.6;margin:0;max-width:560px;}
+        .btn-purple{background-color:var(--purple-accent);color:#fff;padding:12px 24px;border-radius:8px;font-family:var(--font-ui);font-weight:700;font-size:0.9rem;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;white-space:nowrap;}
+        .btn-purple:hover{background-color:var(--purple-hover);transform:translateY(-1px);box-shadow:0 4px 12px rgba(196,90,255,0.4);}
+
+        /* FOOTER */
+        footer{background-color:var(--bg-footer);border-top:2px solid var(--red-accent);padding:40px 5%;text-align:center;margin-top:0;}
+        .footer-content{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:0.75rem;}
+        .footer-logo{color:var(--red-accent);margin-bottom:0.25rem;}
+        .footer-school{font-family:var(--font-ui);font-weight:700;font-size:1.1rem;color:#fff;}
+        .footer-info{color:rgba(255,255,255,0.4);font-size:0.9rem;}
+
+        /* RESPONSIVE */
+        @media(max-width:1023px){.disciplinas-grid{grid-template-columns:repeat(2,1fr);}.ejemplos-grid{grid-template-columns:1fr;}.prompt-params{grid-template-columns:1fr;}}
+        @media(max-width:767px){
+            .navbar{padding:0 20px;background-color:#fff;}.menu-toggle{display:flex;}
+            .nav-menu{position:absolute;top:70px;left:0;width:100%;background-color:rgba(255,255,255,0.98);backdrop-filter:blur(16px);flex-direction:column;padding:20px;gap:1.25rem;border-bottom:1px solid var(--border-subtle);display:none;box-shadow:0 10px 20px rgba(0,0,0,0.05);}
+            .nav-menu.active{display:flex;}
+            .hero-sub h1{font-size:2rem;}
+            .disciplinas-grid{grid-template-columns:repeat(2,1fr);}
+            .consejo-banner{flex-direction:column;align-items:flex-start;}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">IA <span>Docente</span></a>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="prompting.html" class="nav-link">Prompting</a></li>
+            <li><a href="gemini.html" class="nav-link">Gemini</a></li>
+            <li><a href="notebooklm.html" class="nav-link">NotebookLM</a></li>
+            <li><a href="gems.html" class="nav-link">Gems</a></li>
+            <li><a href="imagenes.html" class="nav-link active-page">Imágenes</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero-sub">
+        <div class="badge-sub">Módulo 05</div>
+        <h1>Generación de <span>Imágenes</span> con IA</h1>
+        <p>Crea recursos visuales únicos para el aula desde cero: ilustraciones didácticas, infografías, pósters y vídeos cortos adaptados exactamente a lo que necesitas.</p>
+    </header>
+
+    <!-- UTILIDAD -->
+    <section class="utilidad-section">
+        <div class="utilidad-inner">
+            <div class="utilidad-header">
+                <h2>¿Por qué generar imágenes con IA en docencia?</h2>
+                <p>El recurso visual perfecto para tu explicación casi nunca existe ya hecho. La IA generativa permite crear exactamente la imagen que necesitas, en el estilo que quieres, con el contenido concreto de tu asignatura — sin depender de bancos de imágenes genéricos ni de habilidades de diseño.</p>
+            </div>
+            <div class="disciplinas-grid">
+                <div class="disciplina-card">
+                    <span class="disc-emoji">🔬</span>
+                    <div class="disc-name">Ciencias</div>
+                    <div class="disc-desc">Diagramas celulares, reacciones químicas, representaciones de fenómenos físicos</div>
+                </div>
+                <div class="disciplina-card">
+                    <span class="disc-emoji">🌍</span>
+                    <div class="disc-name">Historia / Geografía</div>
+                    <div class="disc-desc">Recreaciones históricas, mapas temáticos, infografías de períodos y civilizaciones</div>
+                </div>
+                <div class="disciplina-card">
+                    <span class="disc-emoji">📐</span>
+                    <div class="disc-name">Matemáticas</div>
+                    <div class="disc-desc">Representaciones geométricas, gráficas de funciones, esquemas de problemas contextuales</div>
+                </div>
+                <div class="disciplina-card">
+                    <span class="disc-emoji">🎨</span>
+                    <div class="disc-name">Arte / Plástica</div>
+                    <div class="disc-desc">Ejemplos de estilos artísticos, referencias visuales, composiciones para análisis</div>
+                </div>
+                <div class="disciplina-card">
+                    <span class="disc-emoji">📖</span>
+                    <div class="disc-name">Lengua / Literatura</div>
+                    <div class="disc-desc">Ilustraciones de textos narrativos, retratos de autores en estilo artístico, escenas literarias</div>
+                </div>
+                <div class="disciplina-card">
+                    <span class="disc-emoji">🌱</span>
+                    <div class="disc-name">Biología / Naturales</div>
+                    <div class="disc-desc">Ecosistemas, ciclos naturales, anatomía animal y vegetal con precisión científica</div>
+                </div>
+                <div class="disciplina-card">
+                    <span class="disc-emoji">💻</span>
+                    <div class="disc-name">Digitalización / TIC</div>
+                    <div class="disc-desc">Diagramas de redes, infografías tecnológicas, esquemas de arquitectura digital</div>
+                </div>
+                <div class="disciplina-card">
+                    <span class="disc-emoji">🏛️</span>
+                    <div class="disc-name">Filosofía / Valores</div>
+                    <div class="disc-desc">Representaciones conceptuales abstractas, retratos filosóficos, ilustraciones de dilemas éticos</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CÓMO ACCEDER -->
+    <section class="acceso-section">
+        <div class="acceso-inner">
+            <h2>Cómo acceder a la generación de imágenes en Gemini</h2>
+            <p>La herramienta de generación de imágenes está integrada directamente en el chat de Gemini. No necesitas ninguna aplicación adicional.</p>
+            <div class="acceso-steps">
+                <div class="acceso-step">
+                    <div class="acceso-num">1</div>
+                    <div class="acceso-text">
+                        <h4>Abre Gemini y localiza el botón de herramientas</h4>
+                        <p>Ve a <strong>gemini.google.com</strong>. En la barra inferior del chat, pulsa el icono <strong>+</strong> o el botón <strong>"Herramientas"</strong> situado a la izquierda del campo de texto.</p>
+                    </div>
+                </div>
+                <div class="acceso-step">
+                    <div class="acceso-num">2</div>
+                    <div class="acceso-text">
+                        <h4>Selecciona "Crear imagen"</h4>
+                        <p>En el menú desplegable que aparece, selecciona la opción <strong>"Crear imagen"</strong>. El modo de generación de imágenes se activará para esa conversación.</p>
+                        <div class="step-note">🎨 También puedes activarlo escribiendo directamente en el chat: <em>"Crea una imagen de..."</em> — Gemini detecta automáticamente la intención y activa el generador.</div>
+                    </div>
+                </div>
+                <div class="acceso-step">
+                    <div class="acceso-num">3</div>
+                    <div class="acceso-text">
+                        <h4>Escribe tu prompt y genera</h4>
+                        <p>Describe con detalle la imagen que quieres. Cuanto más específico seas sobre el estilo, la composición, los colores y el contenido, mejor será el resultado.</p>
+                        <div class="step-note">🔁 Puedes seguir dando instrucciones en el chat para refinar la imagen: <em>"Hazla más oscura"</em>, <em>"Añade una etiqueta con el nombre de cada elemento"</em>, <em>"Cambia el fondo a blanco"</em>.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IMPORTANCIA DEL PROMPT -->
+    <section class="prompt-section">
+        <div class="prompt-inner">
+            <h2>La calidad de la imagen depende del prompt</h2>
+            <p>Un prompt vago genera una imagen genérica. Un prompt preciso genera exactamente el recurso que necesitas para tu clase. Estos son los parámetros clave que puedes incluir:</p>
+
+            <div class="prompt-tip-box">
+                <div class="tip-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div class="tip-text">
+                    <h3>El truco más útil: pídele a Gemini que escriba el prompt por ti</h3>
+                    <p>Antes de generar la imagen, escribe en el chat: <strong>"Ayúdame a escribir un prompt detallado para crear una imagen de [tu idea] para usar en clase de [tu asignatura]."</strong> Gemini generará un prompt profesional con todos los parámetros técnicos. Luego activa "Crear imagen" y pégalo.</p>
+                </div>
+            </div>
+
+            <div class="prompt-params">
+                <div class="param-item">
+                    <div class="param-name">🎭 ESTILO VISUAL</div>
+                    <div class="param-desc">Fotorrealista, ilustración científica, infografía, acuarela, 3D render, estilo Nature/Science, cómic educativo…</div>
+                </div>
+                <div class="param-item">
+                    <div class="param-name">📐 COMPOSICIÓN Y FORMATO</div>
+                    <div class="param-desc">Vertical 9:16, horizontal 16:9, cuadrado, póster A3, primer plano, vista aérea, corte transversal…</div>
+                </div>
+                <div class="param-item">
+                    <div class="param-name">💡 LUZ Y AMBIENTE</div>
+                    <div class="param-desc">Iluminación de estudio, luz natural difusa, contraluz, temperatura de color 5600K, sombras suaves…</div>
+                </div>
+                <div class="param-item">
+                    <div class="param-name">📷 PARÁMETROS FOTOGRÁFICOS</div>
+                    <div class="param-desc">ISO, apertura f/, profundidad de campo, bokeh, enfoque selectivo, exposición larga… (para imágenes fotorrealistas)</div>
+                </div>
+                <div class="param-item">
+                    <div class="param-name">🎨 PALETA DE COLORES</div>
+                    <div class="param-desc">Colores específicos, paleta coherente con el tema, acentos vivos, fondo neutro, alto contraste…</div>
+                </div>
+                <div class="param-item">
+                    <div class="param-name">🏷️ ELEMENTOS DE TEXTO</div>
+                    <div class="param-desc">Etiquetas, conectores, encabezados, leyendas, tipografía sans-serif, módulos informativos…</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EJEMPLOS -->
+    <section class="ejemplos-section">
+        <div class="ejemplos-inner">
+            <div class="ejemplos-header">
+                <h2>Ejemplos de prompts listos para usar</h2>
+                <p>Copia cualquiera de estos prompts, activa "Crear imagen" en Gemini y observa el resultado. Luego adáptalos a tu asignatura.</p>
+            </div>
+            <div class="ejemplos-grid">
+
+                <!-- EJEMPLO 1 — INFOGRAFÍA CIENCIAS -->
+                <div class="ejemplo-card">
+                    <div class="ejemplo-top-line"></div>
+                    <span class="ejemplo-type-badge badge-img">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        IMAGEN · Ciencias
+                    </span>
+                    <div class="ejemplo-title">Infografía científica · Efecto invernadero</div>
+                    <div class="ejemplo-subtitle">Póster vertical 9:16 de divulgación científica con diseño editorial premium</div>
+                    <span class="prompt-label">PROMPT</span>
+                    <div class="prompt-box" id="prompt1">Póster infográfico vertical 9:16 con estética premium de divulgación científica sobre el efecto invernadero. Fondo sobrio, limpio y sofisticado, con luz de estudio envolvente y un render 3D hiperrealista como protagonista, mostrando estructura exacta, proporciones naturales y texturas ricas en detalle. Composición editorial moderna: encabezado grande y contundente en la zona superior, acompañado de una frase breve estilo explicación científica. Distribuye alrededor del sujeto entre 4 y 6 módulos informativos con esquinas redondeadas, pictogramas, pequeños esquemas técnicos y conectores finos dirigidos a puntos relevantes. Incluye un personaje experto en miniatura, investigador, naturalista o divulgador, interactuando con el elemento mediante una lupa, puntero o tablet. En la zona inferior, añade una banda con datos clave y tarjetas de comparación rápida. Usa una paleta coherente con el tema, reforzada con acentos vivos. Resultado viral, claro, cinematográfico, profesional, educativo y muy llamativo visualmente.</div>
+                    <button class="btn-copy" onclick="copyPrompt('prompt1', this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <span>Copiar prompt</span>
+                    </button>
+                </div>
+
+                <!-- EJEMPLO 2 — BIOLOGÍA PARÁMETROS TÉCNICOS -->
+                <div class="ejemplo-card">
+                    <div class="ejemplo-top-line"></div>
+                    <span class="ejemplo-type-badge badge-img">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        IMAGEN · Biología · Parámetros técnicos
+                    </span>
+                    <div class="ejemplo-title">Célula eucariota · Microscopía simulada</div>
+                    <div class="ejemplo-subtitle">Fotografía científica hiperrealista con parámetros de cámara profesionales para Biología</div>
+                    <span class="prompt-label">PROMPT</span>
+                    <div class="prompt-box" id="prompt2">Fotografía científica hiperrealista de una célula eucariota animal en sección transversal, capturada con microscopía electrónica de transmisión simulada. ISO 50, obturador 1/500s, apertura f/2.8, iluminación de eje frío con temperatura de color 5600K y relleno de luz lateral suave desde 45°. Profundidad de campo ultra reducida con enfoque selectivo en el núcleo celular, dejando orgánulos periféricos en desenfoque progresivo tipo bokeh científico. Textura de membrana con microdetalle de fosfolípidos visible, mitocondrias con crestas claramente diferenciadas, retículo endoplasmático rugoso con ribosomas. Paleta tonal en azul índigo y verde esmeralda sobre fondo negro profundo. Resultado: imagen de divulgación científica de nivel Nature o Science, con etiquetas tipográficas integradas señalando cada orgánulo con líneas finas y tipografía sans-serif minimalista.</div>
+                    <button class="btn-copy" onclick="copyPrompt('prompt2', this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <span>Copiar prompt</span>
+                    </button>
+                </div>
+
+                <!-- EJEMPLO 3 — HISTORIA 4º ESO -->
+                <div class="ejemplo-card">
+                    <div class="ejemplo-top-line"></div>
+                    <span class="ejemplo-type-badge badge-img">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        IMAGEN · Historia · 4º ESO
+                    </span>
+                    <div class="ejemplo-title">Infografía didáctica · II Guerra Mundial</div>
+                    <div class="ejemplo-subtitle">Mapa de Europa con movimientos de ejércitos, ciudades clave, elementos bélicos y línea de tiempo</div>
+                    <span class="prompt-label">PROMPT</span>
+                    <div class="prompt-box" id="prompt3">Ilustración educativa hiperrealista estilo infografía histórica vertical 9:16 sobre la Segunda Guerra Mundial para alumnos de 4º ESO. Elemento central: mapa político de Europa 1939–1945 con relieve topográfico suave, países diferenciados por bloques (Eje en rojo oscuro, Aliados en azul acero, neutros en gris piedra). Flechas de movimiento de ejércitos con grosor proporcional a la magnitud de la operación: invasión de Polonia 1939, Operación Barbarroja 1941, desembarco de Normandía 1944, avance aliado hacia Berlín 1945. Ciudades clave marcadas con iconos militares: Berlín, Londres, Stalingrado, París, Normandía, Varsovia. Elementos bélicos integrados en los márgenes con render 3D fotorrealista: tanque Sherman en primer plano inferior izquierda, bombardero Spitfire sobrevolando en diagonal, grupo de soldados en trinchera en escorzo lateral, submarino emergiendo en el Atlántico. Encabezado superior tipografía serif bold: "Segunda Guerra Mundial 1939–1945". Banda inferior con línea de tiempo horizontal con 6 hitos: 1939 Invasión de Polonia · 1940 Batalla de Francia · 1941 Operación Barbarroja · 1942 Batalla de Stalingrado · 1944 Día D · 1945 Rendición de Alemania. Cada hito con icono minimalista y fecha destacada. Paleta: negro carbón, rojo sangre, azul acero, dorado antiguo sobre fondo pergamino envejecido. Iluminación dramática de estudio, ISO 100, apertura f/8, temperatura de color 3800K. Resultado: recurso visual impactante, riguroso y didáctico, apto para proyección en aula.</div>
+                    <button class="btn-copy" onclick="copyPrompt('prompt3', this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <span>Copiar prompt</span>
+                    </button>
+                </div>
+
+                <!-- EJEMPLO 4 — LENGUA 2º BACH -->
+                <div class="ejemplo-card">
+                    <div class="ejemplo-top-line"></div>
+                    <span class="ejemplo-type-badge badge-img">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        IMAGEN · Lengua · 2º Bachillerato
+                    </span>
+                    <div class="ejemplo-title">Póster cultural · Generación del 27</div>
+                    <div class="ejemplo-subtitle">Cartel modernista reinterpretado con diseño editorial contemporáneo para Lengua y Literatura</div>
+                    <span class="prompt-label">PROMPT</span>
+                    <div class="prompt-box" id="prompt4">Póster cultural vertical 3:4 sobre la Generación del 27, estética de cartel modernista español de los años 20-30 reinterpretado con diseño editorial contemporáneo. Composición central con siluetas estilizadas de los poetas principales (Lorca, Alberti, Cernuda, Salinas) en torno a un micrófono de época y páginas de manuscritos volando en espiral. Fondo con textura de papel de periódico antiguo y tinta azul índigo. ISO 64, apertura f/5.6, iluminación de estudio lateral suave a 45°, temperatura de color 4200K, profundidad de campo media con foco en el centro compositivo. Tipografía art déco en la cabecera: "Generación del 27 · La vanguardia española". Fragmentos de versos en tipografía manuscrita integrados como elementos decorativos en los márgenes. Paleta: azul Prusia, dorado viejo, blanco roto y negro tinta. Resultado: recurso visual de alta calidad para análisis literario en Bachillerato.</div>
+                    <button class="btn-copy" onclick="copyPrompt('prompt4', this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <span>Copiar prompt</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CONSEJO FINAL -->
+    <section class="consejo-section">
+        <div class="consejo-inner">
+            <div class="consejo-banner">
+                <div class="consejo-text">
+                    <h3>¿No sabes cómo describir la imagen que necesitas?</h3>
+                    <p>Pídele a Gemini que escriba el prompt por ti. Describe tu idea en lenguaje sencillo y deja que la IA lo convierta en un prompt técnico de alta calidad. Es la forma más rápida de obtener exactamente el recurso visual que buscas para tu clase.</p>
+                </div>
+                <a href="https://gemini.google.com" target="_blank" class="btn-purple">
+                    Generar en Gemini
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div>
+            <div class="footer-school">Colegio de Fomento Aitana</div>
+            <div class="footer-info">Formación Interna · Google Workspace · 2025–26</div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('navbar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 20));
+            menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => navMenu.classList.remove('active')));
+        });
+
+        function copyPrompt(id, btn) {
+            const text = document.getElementById(id).innerText;
+            const span = btn.querySelector('span');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => success(span, btn));
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = text; ta.style.position = 'fixed';
+                document.body.appendChild(ta); ta.focus(); ta.select();
+                try { document.execCommand('copy'); success(span, btn); } catch(e) {}
+                document.body.removeChild(ta);
+            }
+        }
+        function success(span, btn) {
+            span.innerText = '¡Copiado! ✓';
+            btn.style.color = '#2d7a4f';
+            btn.style.borderColor = '#a8d5b5';
+            setTimeout(() => { span.innerText = 'Copiar prompt'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+        }
+    </script>
+</body>
+</html>

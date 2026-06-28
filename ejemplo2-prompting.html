@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo 2: Infografía histórica - IA Docente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@400;500&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f8f9fa; --bg-card: #ffffff; --bg-intro: #f1f3f5; --bg-footer: #1a1d24;
+            --red-accent: #e03030; --red-hover: #c22020; --text-main: #1a1d24;
+            --text-muted: #5c6370; --text-dark: #adb5bd; --border-subtle: rgba(0,0,0,0.06);
+            --font-ui: 'Inter', sans-serif; --font-body: 'Roboto', sans-serif; --font-mono: 'Roboto Mono', monospace;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-body); background-color: var(--bg-main); color: var(--text-main); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        h1,h2,h3,h4 { font-family: var(--font-ui); }
+
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; z-index: 1000; background-color: rgba(248,249,250,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); }
+        .nav-logo { font-size: 1.4rem; font-weight: 900; color: var(--text-main); text-decoration: none; letter-spacing: -0.5px; font-family: var(--font-ui); }
+        .nav-logo span { color: var(--red-accent); }
+        .nav-menu { display: flex; gap: 1.5rem; list-style: none; }
+        .nav-link { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; font-family: var(--font-ui); transition: color 0.25s; }
+        .nav-link:hover, .nav-link.active-page { color: var(--red-accent); }
+        .menu-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; }
+        .menu-toggle span { display: block; width: 25px; height: 2px; background-color: var(--text-main); }
+
+        .breadcrumb-wrap { padding: 86px 5% 12px; }
+        .breadcrumb { font-family: var(--font-ui); font-size: 0.85rem; color: var(--text-muted); }
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+        .breadcrumb a:hover { color: var(--red-accent); }
+        .breadcrumb .sep { color: var(--text-dark); margin: 0 6px; }
+
+        .hero { padding: 20px 5% 50px; }
+        .badge-mod { display: inline-block; background-color: rgba(224,48,48,0.08); color: var(--red-accent); font-family: var(--font-ui); font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 50px; margin-bottom: 0.75rem; letter-spacing: 0.5px; }
+        .hero h1 { font-size: 2.2rem; font-weight: 900; margin-bottom: 0.4rem; letter-spacing: -0.5px; }
+        .hero .subtitle { font-size: 1.1rem; color: var(--text-muted); }
+
+        .tag-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 700; color: var(--red-accent); letter-spacing: 1px; display: block; margin-bottom: 0.5rem; }
+
+        .section-situacion { background-color: var(--bg-intro); padding: 50px 5%; }
+        .text-situacion { color: var(--text-muted); max-width: 800px; font-size: 1.1rem; line-height: 1.7; }
+
+        .section-turn { background-color: var(--bg-card); padding: 60px 5%; text-align: center; }
+        .turn-inner { max-width: 700px; margin: 0 auto; }
+        .turn-inner h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 1rem; }
+        .turn-inner p { color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; }
+        .btn-red { background-color: var(--red-accent); color: #fff; padding: 14px 32px; border-radius: 8px; font-family: var(--font-ui); font-weight: 700; font-size: 1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer; transition: all 0.2s; }
+        .btn-red:hover { background-color: var(--red-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(224,48,48,0.3); }
+
+        .separator-line { background: linear-gradient(90deg, transparent 10%, var(--red-accent) 50%, transparent 90%); height: 1px; opacity: 0.2; border: none; margin: 0; }
+
+        .section-prompt { background-color: var(--bg-intro); padding: 60px 5%; }
+        .prompt-header { text-align: center; max-width: 700px; margin: 0 auto 2.5rem; }
+        .prompt-header h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 0.75rem; }
+        .prompt-header p { color: var(--text-muted); font-size: 1rem; line-height: 1.6; }
+
+        .btn-unlock { border: 2px solid var(--red-accent); background-color: #fff; color: var(--red-accent); padding: 14px 32px; border-radius: 8px; font-family: var(--font-ui); font-weight: 700; font-size: 1rem; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s; }
+        .btn-unlock:hover { background-color: rgba(224,48,48,0.05); }
+        .unlock-wrap { text-align: center; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .modal-box { background: #fff; border-radius: 16px; padding: 40px; max-width: 420px; width: 90%; text-align: center; position: relative; }
+        .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--text-muted); line-height: 1; }
+        .modal-box h3 { font-family: var(--font-ui); font-size: 1.3rem; font-weight: 700; margin: 1rem 0 0.5rem; }
+        .modal-box p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+        .modal-input { width: 100%; padding: 12px 16px; border: 1.5px solid var(--border-subtle); border-radius: 8px; font-size: 1.1rem; font-family: var(--font-ui); text-align: center; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 1rem; outline: none; transition: border-color 0.2s; }
+        .modal-input:focus { border-color: var(--red-accent); }
+        .btn-confirm { width: 100%; background-color: var(--red-accent); color: #fff; padding: 12px; border-radius: 8px; font-family: var(--font-ui); font-weight: 700; border: none; cursor: pointer; font-size: 1rem; transition: background-color 0.2s; }
+        .btn-confirm:hover { background-color: var(--red-hover); }
+        .error-msg { display: none; color: #c22020; font-size: 0.9rem; margin-top: 0.75rem; font-weight: 600; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
+        .shake { animation: shake 0.4s ease-in-out; }
+
+        .unlocked-zone { display: none; text-align: center; margin-top: 2.5rem; opacity: 0; transform: translateY(10px); transition: opacity 0.4s ease, transform 0.4s ease; }
+        .unlocked-zone.visible { display: block; }
+        .unlocked-zone.animated { opacity: 1; transform: translateY(0); }
+        .badge-green { display: inline-block; background-color: #edf7f0; color: #2d7a4f; border: 1px solid #a8d5b5; border-radius: 50px; padding: 6px 16px; font-family: var(--font-ui); font-weight: 700; font-size: 0.85rem; margin-bottom: 1.5rem; }
+        .prompt-box { background: rgba(224,48,48,0.04); border-left: 3px solid var(--red-accent); border-radius: 0 12px 12px 0; padding: 24px; font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.7; white-space: pre-wrap; overflow-x: auto; color: var(--text-main); max-width: 860px; margin: 0 auto 1.5rem; text-align: left; }
+        .btn-copy { border: 1px solid var(--border-subtle); background-color: #fff; color: var(--text-muted); border-radius: 8px; padding: 10px 20px; font-family: var(--font-ui); font-weight: 600; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background-color 0.2s; }
+        .btn-copy:hover { background-color: var(--bg-main); }
+
+        .comparison-note { background-color: #fff; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px 40px; max-width: 700px; margin: 40px auto; text-align: center; }
+        .comparison-note p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+        .back-wrap { text-align: center; margin: 30px auto 60px; }
+        .btn-back { border: 1px solid var(--border-subtle); background-color: #fff; color: var(--text-muted); padding: 10px 24px; border-radius: 8px; font-family: var(--font-ui); font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.2s; }
+        .btn-back:hover { border-color: var(--red-accent); color: var(--red-accent); }
+
+        footer { background-color: var(--bg-footer); border-top: 2px solid var(--red-accent); padding: 40px 5%; text-align: center; }
+        .footer-school { font-family: var(--font-ui); font-weight: 700; font-size: 1.1rem; color: #fff; margin-bottom: 0.25rem; }
+        .footer-info { color: rgba(255,255,255,0.4); font-size: 0.9rem; }
+
+        @media (max-width: 767px) {
+            .navbar { padding: 0 20px; }
+            .menu-toggle { display: flex; }
+            .nav-menu { position: absolute; top: 70px; left: 0; width: 100%; background-color: rgba(255,255,255,0.98); flex-direction: column; padding: 20px; gap: 1.25rem; border-bottom: 1px solid var(--border-subtle); display: none; }
+            .nav-menu.active { display: flex; }
+            .hero h1 { font-size: 1.8rem; }
+            .comparison-note { padding: 20px; margin: 30px 4%; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">IA <span>Docente</span></a>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="prompting.html" class="nav-link active-page">Prompting</a></li>
+            <li><a href="gemini.html" class="nav-link">Gemini</a></li>
+            <li><a href="notebooklm.html" class="nav-link">NotebookLM</a></li>
+            <li><a href="gems.html" class="nav-link">Gems</a></li>
+            <li><a href="imagenes.html" class="nav-link">Imágenes</a></li>
+        </ul>
+    </nav>
+
+    <div class="breadcrumb-wrap">
+        <div class="breadcrumb">
+            <a href="index.html">Inicio</a><span class="sep">→</span>
+            <a href="prompting.html">Prompting</a><span class="sep">→</span>
+            Ejemplo 2 · Infografía
+        </div>
+    </div>
+
+    <header class="hero">
+        <span class="badge-mod">Módulo 01 · Ejemplo 2</span>
+        <h1>Infografía histórica</h1>
+        <p class="subtitle">Geografía e Historia · 4º ESO</p>
+    </header>
+
+    <section class="section-situacion">
+        <span class="tag-label">LA SITUACIÓN</span>
+        <p class="text-situacion">Una profesora de Geografía e Historia de 4º ESO quiere crear un póster visual sobre las causas de la Primera Guerra Mundial para usar como recurso en el aula. Necesita una infografía impactante y rigurosa que pueda proyectarse en clase o imprimirse en A3, generada directamente desde Gemini con la herramienta Crear imagen.</p>
+    </section>
+
+    <section class="section-turn">
+        <div class="turn-inner">
+            <span class="tag-label">TU TURNO</span>
+            <h2>Escríbelo tú en Gemini</h2>
+            <p>Abre Gemini, usa la herramienta "Crear imagen" y describe la infografía con tus propias palabras. Observa el resultado. No hay trampa: cualquier prompt funciona... pero no todos funcionan igual de bien.</p>
+            <a href="https://gemini.google.com" target="_blank" class="btn-red">
+                Probar en Gemini
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <hr class="separator-line">
+
+    <section class="section-prompt">
+        <div class="prompt-header">
+            <span class="tag-label">PROMPT DE CALIDAD ALTA</span>
+            <h2>¿Quieres ver la diferencia?</h2>
+            <p>Este prompt ha sido diseñado para la herramienta "Crear imagen" de Gemini aplicando técnicas avanzadas de descripción visual. Para acceder, introduce la clave que te ha dado el formador.</p>
+        </div>
+        <div class="unlock-wrap">
+            <button class="btn-unlock" id="unlockBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Desbloquear prompt de calidad alta
+            </button>
+            <div class="unlocked-zone" id="unlockedZone">
+                <div class="badge-green">✓ Prompt desbloqueado</div>
+                <div class="prompt-box" id="promptContent">Actúa como un diseñador gráfico especializado en comunicación visual educativa e ilustración histórica de alta calidad.
+
+Genera una infografía vertical en formato A3 (proporción 1:1.41) titulada "Las causas de la Primera Guerra Mundial" destinada a alumnos de 4º ESO (15-16 años).
+
+Estructura visual obligatoria:
+· Franja superior de impacto: título grande con tipografía bold, fecha "1914" como elemento gráfico dominante y mapa estilizado de Europa con los países beligerantes destacados en rojo y azul
+· Bloque central: 4 causas principales organizadas como 4 bloques visuales con icono ilustrado, título en negrita y descripción de 2 líneas máximo:
+  1. El sistema de alianzas (Triple Alianza vs Triple Entente) — icono: escudos enfrentados
+  2. El imperialismo y la competencia colonial — icono: mapa del mundo con flechas
+  3. El nacionalismo exacerbado — icono: banderas fragmentadas
+  4. La carrera armamentística — icono: cañón y acorazado estilizados
+· Línea de tiempo inferior: 5 hitos clave de junio-agosto 1914 como detonante inmediato, con iconos minimalistas
+· Pie de infografía: fuente y curso académico
+
+Estilo visual:
+· Paleta de colores: rojo oscuro #8B0000, azul marino #1B2A4A, crema #F5F0E8 y dorado #C9A84C
+· Estética de cartel histórico europeo de principios del siglo XX combinada con diseño editorial moderno
+· Tipografía: serif clásica para títulos, sans-serif limpia para el cuerpo
+· Ilustraciones: estilo grabado vintage con líneas limpias, no fotorrealista
+· Alta densidad visual pero con jerarquía clara: el ojo debe recorrer la infografía de arriba a abajo sin perderse
+
+Requisitos técnicos:
+· Resolución adecuada para impresión en A3
+· Sin texto ilegible: mínimo 14pt equivalente
+· Todos los textos en español
+· El resultado debe poder usarse directamente en el aula sin edición posterior</div>
+                <button class="btn-copy" id="copyBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span id="copyText">Copiar prompt</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <div class="comparison-note">
+        <p>El prompt básico obtiene una imagen genérica y poco útil. El prompt de calidad alta, con descripción visual detallada, genera una infografía estructurada y lista para proyectar o imprimir en el aula.</p>
+    </div>
+
+    <div class="back-wrap">
+        <a href="prompting.html" class="btn-back">← Volver a Prompting</a>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <button class="modal-close" id="modalClose">✕</button>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e03030" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <h3>Introduce la clave</h3>
+            <p>El formador te la ha dado al inicio de la sesión</p>
+            <input type="text" class="modal-input" id="keyInput" placeholder="••••" autocomplete="off">
+            <button class="btn-confirm" id="confirmBtn">Confirmar</button>
+            <div class="error-msg" id="errorMsg">¡Gracias por nada, amigacho!</div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-school">Colegio de Fomento Aitana</div>
+        <div class="footer-info">Formación Interna · Google Workspace · 2025–26</div>
+    </footer>
+
+    <script>
+        const CLAVE = "PAKI";
+        const menuToggle = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+
+        const unlockBtn = document.getElementById('unlockBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalClose = document.getElementById('modalClose');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const keyInput = document.getElementById('keyInput');
+        const errorMsg = document.getElementById('errorMsg');
+        const unlockedZone = document.getElementById('unlockedZone');
+
+        unlockBtn.addEventListener('click', () => {
+            modalOverlay.style.display = 'flex';
+            setTimeout(() => keyInput.focus(), 100);
+        });
+
+        function closeModal() {
+            modalOverlay.style.display = 'none';
+            keyInput.value = '';
+            errorMsg.style.display = 'none';
+            keyInput.classList.remove('shake');
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
+
+        function validate() {
+            if (keyInput.value.trim().toUpperCase() === CLAVE) {
+                closeModal();
+                unlockBtn.style.display = 'none';
+                unlockedZone.classList.add('visible');
+                setTimeout(() => unlockedZone.classList.add('animated'), 10);
+            } else {
+                errorMsg.style.display = 'block';
+                keyInput.classList.remove('shake');
+                void keyInput.offsetWidth;
+                keyInput.classList.add('shake');
+            }
+        }
+
+        confirmBtn.addEventListener('click', validate);
+        keyInput.addEventListener('keydown', e => { if (e.key === 'Enter') validate(); });
+
+        const copyBtn = document.getElementById('copyBtn');
+        const copyText = document.getElementById('copyText');
+        const promptContent = document.getElementById('promptContent');
+
+        copyBtn.addEventListener('click', () => {
+            const text = promptContent.innerText;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(successCopy);
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = text; ta.style.position = 'fixed';
+                document.body.appendChild(ta); ta.focus(); ta.select();
+                try { document.execCommand('copy'); successCopy(); } catch(e) {}
+                document.body.removeChild(ta);
+            }
+        });
+
+        function successCopy() {
+            copyText.innerText = '¡Copiado! ✓';
+            copyBtn.style.color = '#2d7a4f';
+            setTimeout(() => { copyText.innerText = 'Copiar prompt'; copyBtn.style.color = ''; }, 2000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo 1: Ejercicios en Google Docs - IA Docente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f8f9fa; --bg-card: #ffffff; --bg-intro: #f1f3f5; --bg-footer: #1a1d24;
+            --red-accent: #e03030; --blue-accent: #4285f4; --blue-hover: #2b6fd4;
+            --text-main: #1a1d24; --text-muted: #5c6370; --text-dark: #adb5bd;
+            --border-subtle: rgba(0,0,0,0.06); --font-ui: 'Inter', sans-serif; --font-body: 'Roboto', sans-serif;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-body); background-color: var(--bg-main); color: var(--text-main); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        h1,h2,h3,h4 { font-family: var(--font-ui); }
+
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; z-index: 1000; background-color: rgba(248,249,250,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); }
+        .nav-logo { font-size: 1.4rem; font-weight: 900; color: var(--text-main); text-decoration: none; letter-spacing: -0.5px; font-family: var(--font-ui); }
+        .nav-logo span { color: var(--red-accent); }
+        .nav-menu { display: flex; gap: 1.5rem; list-style: none; }
+        .nav-link { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; font-family: var(--font-ui); transition: color 0.25s; }
+        .nav-link:hover { color: var(--red-accent); }
+        .nav-link.active-page { color: var(--blue-accent); }
+        .menu-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; }
+        .menu-toggle span { display: block; width: 25px; height: 2px; background-color: var(--text-main); }
+
+        .breadcrumb-wrap { padding: 86px 5% 12px; }
+        .breadcrumb { font-family: var(--font-ui); font-size: 0.85rem; color: var(--text-muted); }
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+        .breadcrumb a:hover { color: var(--blue-accent); }
+        .breadcrumb .sep { color: var(--text-dark); margin: 0 6px; }
+
+        .hero { padding: 20px 5% 50px; }
+        .badge-mod { display: inline-block; background-color: rgba(66,133,244,0.08); color: var(--blue-accent); font-family: var(--font-ui); font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 50px; margin-bottom: 0.75rem; letter-spacing: 0.5px; border: 1px solid rgba(66,133,244,0.2); }
+        .hero h1 { font-size: 2.2rem; font-weight: 900; margin-bottom: 0.4rem; letter-spacing: -0.5px; }
+        .hero .subtitle { font-size: 1.1rem; color: var(--text-muted); }
+
+        .tag-label { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 700; color: var(--blue-accent); letter-spacing: 1px; display: block; margin-bottom: 0.5rem; }
+
+        .section-situacion { background-color: var(--bg-intro); padding: 50px 5%; }
+        .text-block { color: var(--text-muted); max-width: 800px; font-size: 1.05rem; line-height: 1.7; }
+
+        /* STEPS SECTION */
+        .section-steps { background-color: var(--bg-card); padding: 60px 5%; }
+        .steps-inner { max-width: 860px; margin: 0 auto; }
+        .steps-header { margin-bottom: 2.5rem; }
+        .steps-header h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 0.5rem; }
+        .steps-header p { color: var(--text-muted); font-size: 1rem; line-height: 1.6; }
+
+        .steps-list { display: flex; flex-direction: column; gap: 1.25rem; }
+        .step-item { display: flex; gap: 1.25rem; align-items: flex-start; background-color: var(--bg-main); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.25rem 1.5rem; }
+        .step-num { width: 36px; height: 36px; border-radius: 50%; background-color: rgba(66,133,244,0.1); color: var(--blue-accent); font-family: var(--font-ui); font-weight: 900; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .step-content h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; color: var(--text-main); }
+        .step-content p { font-size: 0.92rem; color: var(--text-muted); line-height: 1.55; margin: 0; }
+        .step-content .step-note { margin-top: 0.5rem; background-color: rgba(66,133,244,0.05); border-left: 3px solid var(--blue-accent); border-radius: 0 6px 6px 0; padding: 8px 12px; font-size: 0.88rem; color: var(--text-main); line-height: 1.5; }
+
+        /* IDEAS SECTION */
+        .section-ideas { background-color: var(--bg-intro); padding: 60px 5%; }
+        .ideas-inner { max-width: 860px; margin: 0 auto; }
+        .ideas-inner h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 0.5rem; }
+        .ideas-inner > p { color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; }
+        .ideas-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
+        .idea-card { background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1.25rem; }
+        .idea-subject { font-family: var(--font-ui); font-weight: 700; font-size: 0.85rem; color: var(--blue-accent); margin-bottom: 0.4rem; letter-spacing: 0.5px; }
+        .idea-card ul { padding-left: 1.1rem; margin: 0; }
+        .idea-card ul li { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+        /* RESULT SECTION */
+        .section-result { background-color: var(--bg-card); padding: 60px 5%; }
+        .result-inner { max-width: 860px; margin: 0 auto; text-align: center; }
+        .result-inner h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 0.75rem; }
+        .result-inner p { color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .result-preview { background-color: var(--bg-main); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem; text-align: left; margin-bottom: 1.5rem; }
+        .result-preview h4 { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-main); border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem; }
+        .result-preview ul { padding-left: 1.2rem; }
+        .result-preview ul li { font-size: 0.92rem; color: var(--text-muted); line-height: 1.7; }
+        .btn-gemini { background-color: var(--blue-accent); color: #fff; padding: 14px 32px; border-radius: 8px; font-family: var(--font-ui); font-weight: 700; font-size: 1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .btn-gemini:hover { background-color: var(--blue-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(66,133,244,0.3); }
+
+        .separator-line { background: linear-gradient(90deg, transparent 10%, var(--blue-accent) 50%, transparent 90%); height: 1px; opacity: 0.2; border: none; margin: 0; }
+
+        .back-wrap { text-align: center; margin: 40px auto 60px; }
+        .btn-back { border: 1px solid var(--border-subtle); background-color: #fff; color: var(--text-muted); padding: 10px 24px; border-radius: 8px; font-family: var(--font-ui); font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.2s; }
+        .btn-back:hover { border-color: var(--blue-accent); color: var(--blue-accent); }
+
+        footer { background-color: var(--bg-footer); border-top: 2px solid var(--red-accent); padding: 40px 5%; text-align: center; }
+        .footer-school { font-family: var(--font-ui); font-weight: 700; font-size: 1.1rem; color: #fff; margin-bottom: 0.25rem; }
+        .footer-info { color: rgba(255,255,255,0.4); font-size: 0.9rem; }
+
+        @media (max-width: 767px) {
+            .navbar { padding: 0 20px; }
+            .menu-toggle { display: flex; }
+            .nav-menu { position: absolute; top: 70px; left: 0; width: 100%; background-color: rgba(255,255,255,0.98); flex-direction: column; padding: 20px; gap: 1.25rem; border-bottom: 1px solid var(--border-subtle); display: none; }
+            .nav-menu.active { display: flex; }
+            .hero h1 { font-size: 1.8rem; }
+            .ideas-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">IA <span>Docente</span></a>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="prompting.html" class="nav-link">Prompting</a></li>
+            <li><a href="gemini.html" class="nav-link active-page">Gemini</a></li>
+            <li><a href="notebooklm.html" class="nav-link">NotebookLM</a></li>
+            <li><a href="gems.html" class="nav-link">Gems</a></li>
+            <li><a href="imagenes.html" class="nav-link">Imágenes</a></li>
+        </ul>
+    </nav>
+
+    <div class="breadcrumb-wrap">
+        <div class="breadcrumb">
+            <a href="index.html">Inicio</a><span class="sep">→</span>
+            <a href="gemini.html">Gemini</a><span class="sep">→</span>
+            Ejemplo 1 · Ejercicios en Docs
+        </div>
+    </div>
+
+    <header class="hero">
+        <span class="badge-mod">Módulo 02 · Ejemplo 1</span>
+        <h1>Ejercicios en Google Docs</h1>
+        <p class="subtitle">Genera una colección de ejercicios sobre tu unidad didáctica en segundos</p>
+    </header>
+
+    <section class="section-situacion">
+        <span class="tag-label">LA SITUACIÓN</span>
+        <p class="text-block">Tienes el PDF de una unidad didáctica. Quieres generar una colección de ejercicios para trabajar durante una sesión de clase, adaptados al nivel y a tu asignatura, y tenerlos listos directamente en Google Docs para compartirlos o imprimirlos.</p>
+    </section>
+
+    <section class="section-steps">
+        <div class="steps-inner">
+            <div class="steps-header">
+                <span class="tag-label">CÓMO HACERLO</span>
+                <h2>Paso a paso en Gemini</h2>
+                <p>Sigue estas instrucciones usando el PDF de Biología como documento de partida, o usa el tuyo propio sobre cualquier tema y asignatura.</p>
+            </div>
+            <div class="steps-list">
+                <div class="step-item">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <h4>Abre Gemini y sube el documento</h4>
+                        <p>Ve a <strong>gemini.google.com</strong>. En la barra de chat, pulsa el botón <strong>+</strong> y selecciona <strong>"Subir archivos"</strong> para adjuntar el PDF de tu unidad didáctica.</p>
+                        <div class="step-note">📎 Puedes descargar el PDF de ejemplo desde la página anterior (Biología 3º ESO — Aparatos digestivo y respiratorio).</div>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <h4>Escribe tu instrucción</h4>
+                        <p>Una vez subido el PDF, escribe en el chat la instrucción de lo que quieres generar. Puedes usar el tipo de ejercicio que más se adapte a tu asignatura (ver ideas más abajo).</p>
+                        <div class="step-note">✏️ Ejemplo de instrucción: <em>"A partir de este documento, genera 10 preguntas cortas de comprensión sobre los aparatos digestivo y respiratorio para alumnos de 3º ESO. Que sean variadas: algunas de definición, otras de relación y otras de completar."</em></div>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <h4>Revisa y refina el resultado</h4>
+                        <p>Lee los ejercicios generados. Si quieres ajustar algo, pídelo directamente en el chat: cambia la dificultad, el número, el formato o el contenido concreto.</p>
+                        <div class="step-note">🔁 Ejemplo de refinamiento: <em>"Los primeros 5 están bien, pero los 5 últimos son demasiado fáciles. Hazlos más exigentes y añade una pregunta de reflexión al final."</em></div>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <h4>Exporta a Google Docs</h4>
+                        <p>Cuando el resultado te convenza, pulsa el icono <strong>"Exportar a Docs"</strong> que aparece encima de la respuesta de Gemini. Se abrirá automáticamente un Google Doc con el contenido listo para editar, compartir o imprimir.</p>
+                        <div class="step-note">📄 También puedes usar la herramienta <strong>Canvas</strong> de Gemini para editar el documento directamente antes de exportarlo.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="separator-line">
+
+    <section class="section-ideas">
+        <div class="ideas-inner">
+            <span class="tag-label">IDEAS POR ASIGNATURA</span>
+            <h2>¿Qué tipo de ejercicios puedes generar?</h2>
+            <p>Adapta la instrucción a tu materia. Aquí tienes ideas concretas para distintas asignaturas:</p>
+            <div class="ideas-grid">
+                <div class="idea-card">
+                    <div class="idea-subject">🔬 CIENCIAS (Biología, FyQ)</div>
+                    <ul>
+                        <li>Preguntas cortas de definición y comprensión</li>
+                        <li>Colección de problemas numéricos cortos</li>
+                        <li>Completar esquemas o tablas comparativas</li>
+                        <li>Ordenar procesos o secuencias</li>
+                    </ul>
+                </div>
+                <div class="idea-card">
+                    <div class="idea-subject">📚 HUMANIDADES (Historia, Geografía)</div>
+                    <ul>
+                        <li>Cuestiones cortas de comprensión lectora</li>
+                        <li>Relacionar conceptos con flechas</li>
+                        <li>Líneas de tiempo para completar</li>
+                        <li>Preguntas de causa-efecto</li>
+                    </ul>
+                </div>
+                <div class="idea-card">
+                    <div class="idea-subject">🔤 LENGUA Y LITERATURA</div>
+                    <ul>
+                        <li>Ejercicios de sintaxis sobre frases del texto</li>
+                        <li>Identificar categorías gramaticales</li>
+                        <li>Preguntas de comprensión lectora</li>
+                        <li>Ejercicios de ortografía y acentuación</li>
+                    </ul>
+                </div>
+                <div class="idea-card">
+                    <div class="idea-subject">🌍 IDIOMAS (Inglés, Valenciano)</div>
+                    <ul>
+                        <li>Completar huecos con vocabulario del tema</li>
+                        <li>Ejercicios de acentuación (Valenciano)</li>
+                        <li>Preguntas de comprensión en el idioma</li>
+                        <li>Traducción de términos clave</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-result">
+        <div class="result-inner">
+            <span class="tag-label">RESULTADO ESPERADO</span>
+            <h2>¿Qué obtendrás?</h2>
+            <p>Un documento de Google Docs listo para usar, con los ejercicios organizados, numerados y adaptados al nivel que hayas indicado.</p>
+            <div class="result-preview">
+                <h4>Ejemplo de estructura del documento generado</h4>
+                <ul>
+                    <li>Título: <em>Ejercicios — Unidad 4: Aparatos digestivo y respiratorio</em></li>
+                    <li>Nombre del alumno / Fecha / Curso</li>
+                    <li>10–15 ejercicios variados numerados</li>
+                    <li>Espacio para responder debajo de cada pregunta</li>
+                    <li>Formato limpio, listo para imprimir en A4</li>
+                </ul>
+            </div>
+            <a href="https://gemini.google.com" target="_blank" class="btn-gemini">
+                Abrir Gemini y probarlo
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <div class="back-wrap">
+        <a href="gemini.html" class="btn-back">← Volver a Gemini</a>
+    </div>
+
+    <footer>
+        <div class="footer-school">Colegio de Fomento Aitana</div>
+        <div class="footer-info">Formación Interna · Google Workspace · 2025–26</div>
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+    </script>
+</body>
+</html>

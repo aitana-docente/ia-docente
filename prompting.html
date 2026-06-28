@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 01: Técnicas de Prompting - IA Docente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@400;500&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-intro: #f1f3f5;
+            --bg-footer: #1a1d24;
+            --red-accent: #e03030;
+            --red-hover: #c22020;
+            --text-main: #1a1d24;
+            --text-muted: #5c6370;
+            --text-dark: #adb5bd;
+            --border-subtle: rgba(0,0,0,0.06);
+            --font-ui: 'Inter', sans-serif;
+            --font-body: 'Roboto', sans-serif;
+            --font-mono: 'Roboto Mono', monospace;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body { background-color: var(--bg-main); color: var(--text-main); font-family: var(--font-body); margin: 0; padding: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        h1,h2,h3,h4 { font-family: var(--font-ui); }
+
+        /* NAVBAR */
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; z-index: 1000; transition: background-color 0.3s ease, border-bottom 0.3s ease; border-bottom: 1px solid transparent; background-color: rgba(248,249,250,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .navbar.scrolled { background-color: rgba(255,255,255,0.95); border-bottom: 1px solid var(--border-subtle); box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+        .nav-logo { font-size: 1.4rem; font-weight: 900; color: var(--text-main); text-decoration: none; letter-spacing: -0.5px; font-family: var(--font-ui); }
+        .nav-logo span { color: var(--red-accent); }
+        .nav-menu { display: flex; gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
+        .nav-link { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; font-family: var(--font-ui); transition: color 0.25s ease; }
+        .nav-link:hover { color: var(--red-accent); }
+        .nav-link.active-page { color: var(--red-accent); }
+        .menu-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; }
+        .menu-toggle span { display: block; width: 25px; height: 2px; background-color: var(--text-main); transition: 0.3s; }
+
+        /* HERO */
+        .hero-sub { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 120px 20px 50px; }
+        .badge-sub { background-color: rgba(224,48,48,0.08); color: var(--red-accent); border: 1px solid rgba(224,48,48,0.15); padding: 4px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; font-family: var(--font-ui); letter-spacing: 0.5px; margin-bottom: 1rem; }
+        .hero-sub h1 { font-size: 2.5rem; font-weight: 900; line-height: 1.2; max-width: 800px; margin: 0 0 0.5rem; letter-spacing: -0.5px; }
+        .hero-sub p { font-size: 1.1rem; color: var(--text-muted); max-width: 650px; margin: 0; line-height: 1.5; }
+
+        /* FRANJA DOCENTE */
+        .franja-docente { background-color: var(--bg-intro); padding: 70px 5%; }
+        .franja-header { text-align: center; margin-bottom: 3.5rem; }
+        .franja-header h2 { font-size: 2.2rem; font-weight: 900; letter-spacing: -0.5px; margin: 0 0 0.5rem; }
+        .franja-header p { color: var(--text-muted); font-size: 1.1rem; margin: 0; }
+        .franja-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3,1fr); gap: 3rem; }
+        .franja-col { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .col-tag { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 700; color: var(--red-accent); letter-spacing: 1px; margin-bottom: 0.5rem; }
+        .franja-col h3 { font-size: 1.6rem; font-weight: 700; margin: 0 0 1rem; color: var(--text-main); letter-spacing: -0.3px; }
+        .franja-col p { color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin: 0; max-width: 340px; }
+        .franja-separator { width: 100%; height: 1px; background: linear-gradient(90deg, transparent 10%, var(--red-accent) 50%, transparent 90%); opacity: 0.25; margin-top: 40px; }
+
+        /* CARDS GRID */
+        .content-section { padding: 80px 5%; max-width: 1300px; margin: 0 auto; }
+        .cards-grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 2.5rem; }
+
+        /* LARGE CARDS */
+        .card-large { grid-column: span 3; background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 3rem 2.5rem; position: relative; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .card-large:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(224,48,48,0.08); border-color: rgba(224,48,48,0.15); }
+
+        /* EXAMPLE CARDS */
+        .card-link-wrapper { grid-column: span 2; text-decoration: none; color: inherit; display: block; }
+        .card-placeholder { background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 3.5rem 2rem; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; height: 100%; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .card-link-wrapper:hover .card-placeholder { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(224,48,48,0.1); border-color: rgba(224,48,48,0.2); }
+
+        .card-top-line { position: absolute; top: 0; left: 0; width: 100%; height: 3px; opacity: 0; background-color: var(--red-accent); transition: opacity 0.25s ease; }
+        .card-large:hover .card-top-line,
+        .card-link-wrapper:hover .card-placeholder .card-top-line { opacity: 1; }
+
+        .card-header-block { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 2rem; width: 100%; }
+        .card-placeholder .card-header-block { margin-bottom: 0; }
+        .card-icon-big { color: var(--red-accent); margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: center; height: 64px; width: 64px; }
+        .card-title-main { font-size: 1.6rem; font-weight: 900; margin: 0; letter-spacing: -0.5px; line-height: 1.3; }
+        .card-intro-text { color: var(--text-muted); font-size: 1rem; line-height: 1.5; margin: 0.5rem 0 0; }
+        .card-sub-title { font-family: var(--font-ui); font-size: 1.1rem; font-weight: 700; margin: 2rem 0 1rem; color: var(--text-main); border-left: 3px solid var(--red-accent); padding-left: 8px; }
+
+        /* PILLS */
+        .pills-container { display: flex; flex-direction: column; gap: 0.75rem; }
+        .pill-item { background-color: var(--bg-main); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; }
+        .pill-header { display: flex; align-items: center; gap: 6px; font-family: var(--font-ui); font-weight: 700; font-size: 0.95rem; color: var(--text-main); }
+        .pill-header svg { color: var(--red-accent); flex-shrink: 0; }
+        .pill-desc { font-size: 0.9rem; color: var(--text-muted); padding-left: 22px; }
+
+        /* TABLE */
+        .table-responsive { width: 100%; overflow-x: auto; margin-bottom: 1.5rem; }
+        .custom-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left; }
+        .custom-table th { background-color: var(--bg-intro); font-family: var(--font-ui); font-weight: 700; padding: 10px 12px; border-bottom: 2px solid var(--border-subtle); }
+        .custom-table td { padding: 12px; border-bottom: 1px solid var(--border-subtle); vertical-align: top; line-height: 1.4; }
+        .custom-table tr:last-child td { border-bottom: none; }
+        .model-badge { font-family: var(--font-mono); font-weight: 500; font-size: 0.8rem; background-color: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+        .note-box { background-color: rgba(224,48,48,0.05); border-radius: 8px; padding: 12px 16px; color: #a81c1c; font-size: 0.9rem; line-height: 1.4; font-weight: 500; margin-top: 1.5rem; }
+
+        /* CRETA+R */
+        .cretar-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.25rem; margin-bottom: 2rem; }
+        .cretar-block { background-color: var(--bg-main); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; }
+        .cretar-letter-box { display: flex; align-items: baseline; gap: 6px; margin-bottom: 0.5rem; }
+        .cretar-letter { font-family: var(--font-ui); font-size: 1.8rem; font-weight: 900; color: var(--red-accent); line-height: 1; }
+        .cretar-name { font-family: var(--font-ui); font-weight: 700; font-size: 1rem; color: var(--text-main); }
+        .cretar-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 0.75rem; }
+        .cretar-example { font-size: 0.82rem; background-color: var(--bg-card); border-left: 2px solid var(--text-dark); padding: 6px 8px; margin: 0; color: #333d4a; border-radius: 0 4px 4px 0; font-family: var(--font-body); }
+        .template-box { background-color: #f8f9fa; border-left: 4px solid var(--red-accent); border-top: 1px solid var(--border-subtle); border-right: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); border-radius: 0 8px 8px 0; padding: 16px; font-family: var(--font-mono); font-size: 0.85rem; color: #2b303a; line-height: 1.6; }
+        .template-box div { margin-bottom: 4px; }
+
+        /* FOOTER */
+        footer { background-color: var(--bg-footer); border-top: 2px solid var(--red-accent); padding: 40px 5%; text-align: center; margin-top: 60px; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+        .footer-logo { color: var(--red-accent); margin-bottom: 0.25rem; }
+        .footer-school { font-family: var(--font-ui); font-weight: 700; font-size: 1.1rem; color: #fff; }
+        .footer-info { color: rgba(255,255,255,0.4); font-size: 0.9rem; }
+
+        /* RESPONSIVE */
+        @media (max-width: 1023px) {
+            .franja-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .cards-grid { grid-template-columns: repeat(4,1fr); }
+            .card-large { grid-column: span 4 !important; }
+            .card-link-wrapper { grid-column: span 2 !important; }
+            .cretar-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 767px) {
+            .navbar { padding: 0 20px; background-color: #fff; }
+            .menu-toggle { display: flex; }
+            .nav-menu { position: absolute; top: 70px; left: 0; width: 100%; background-color: rgba(255,255,255,0.98); backdrop-filter: blur(16px); flex-direction: column; padding: 20px; gap: 1.25rem; border-bottom: 1px solid var(--border-subtle); display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+            .nav-menu.active { display: flex; }
+            .hero-sub h1 { font-size: 2rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .card-large, .card-link-wrapper { grid-column: span 1 !important; }
+            .card-placeholder { padding: 2.5rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">IA <span>Docente</span></a>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="prompting.html" class="nav-link active-page">Prompting</a></li>
+            <li><a href="gemini.html" class="nav-link">Gemini</a></li>
+            <li><a href="notebooklm.html" class="nav-link">NotebookLM</a></li>
+            <li><a href="gems.html" class="nav-link">Gems</a></li>
+            <li><a href="imagenes.html" class="nav-link">Imágenes</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero-sub">
+        <div class="badge-sub">Módulo 01</div>
+        <h1>Técnicas de <span style="color:var(--red-accent);">Prompting</span></h1>
+        <p>Aprende a comunicarte con la IA de forma efectiva para obtener resultados precisos en cualquier tarea educativa.</p>
+    </header>
+
+    <section class="franja-docente">
+        <div class="franja-header">
+            <h2>El papel de la IA en tu práctica docente</h2>
+            <p>Tres ideas que definen cómo entender esta herramienta</p>
+        </div>
+        <div class="franja-grid">
+            <div class="franja-col">
+                <span class="col-tag">QUÉ VAN A VER</span>
+                <h3>Potencia pedagógica</h3>
+                <p>La IA ayuda a activar conocimientos previos, organizar secuencias didácticas, preparar apoyos visuales y diseñar mejores evidencias de aprendizaje.</p>
+            </div>
+            <div class="franja-col">
+                <span class="col-tag">QUÉ VAN A SENTIR</span>
+                <h3>Productividad real</h3>
+                <p>En dos horas pueden construir una unidad casi completa: materiales, evaluación, feedback y un prototipo interactivo.</p>
+            </div>
+            <div class="franja-col">
+                <span class="col-tag">QUÉ NO VAN A HACER</span>
+                <h3>Delegar criterio</h3>
+                <p>La herramienta propone. El docente decide, contextualiza, corrige y refina. Sin esa mediación, la IA no mejora el aprendizaje.</p>
+            </div>
+        </div>
+        <div class="franja-separator"></div>
+    </section>
+
+    <main class="content-section">
+        <div class="cards-grid">
+
+            <!-- TARJETA 1: GEMINI -->
+            <article class="card-large">
+                <div class="card-top-line"></div>
+                <div class="card-header-block">
+                    <div class="card-icon-big">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M12 3c0 4.5 3.5 9 9 9-5.5 0-9 4.5-9 9 0-4.5-3.5-9-9-9 5.5 0 9-4.5 9-9z"/></svg>
+                    </div>
+                    <h3 class="card-title-main">La interfaz de Gemini</h3>
+                    <p class="card-intro-text">Gemini es el ecosistema de IA de Google optimizado para la productividad en el entorno de Google Workspace.</p>
+                </div>
+                <h4 class="card-sub-title">Herramientas disponibles</h4>
+                <div class="pills-container">
+                    <div class="pill-item">
+                        <div class="pill-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>Aprendizaje guiado</div>
+                        <div class="pill-desc">Modo tutor basado en LearnLM; aprende dialogando en lugar de recibir respuestas directas.</div>
+                    </div>
+                    <div class="pill-item">
+                        <div class="pill-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Crear imagen</div>
+                        <div class="pill-desc">Genera imágenes fotorrealistas o ilustradas desde una descripción textual.</div>
+                    </div>
+                    <div class="pill-item">
+                        <div class="pill-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v12M6 12h12"/></svg>Canvas</div>
+                        <div class="pill-desc">Editor visual integrado que conecta Gemini con plantillas de diseño de Canva.</div>
+                    </div>
+                    <div class="pill-item">
+                        <div class="pill-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Deep Research</div>
+                        <div class="pill-desc">Agente de investigación profunda que navega la web, sintetiza fuentes y genera informes con citas.</div>
+                    </div>
+                    <div class="pill-item">
+                        <div class="pill-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Crear música</div>
+                        <div class="pill-desc">Genera composiciones de audio completas (melodía, ritmo, armonía e incluso voz) desde texto.</div>
+                    </div>
+                </div>
+                <h4 class="card-sub-title">Modelos de razonamiento</h4>
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead><tr><th>Modelo</th><th>Cuándo usarlo</th><th>Por qué</th></tr></thead>
+                        <tbody>
+                            <tr><td><span class="model-badge">Flash 3 (Fast)</span></td><td>Consultas rápidas, correos, resúmenes</td><td>El más veloz, ideal para el 80% de las tareas cotidianas.</td></tr>
+                            <tr><td><span class="model-badge">Pro 3.1</span></td><td>Código complejo, documentos largos, prompts elaborados</td><td>Gran ventana de contexto y matices estructurados.</td></tr>
+                            <tr><td><span class="model-badge">Razonamiento</span></td><td>Problemas difíciles, lógica, planificación desde cero</td><td>Piensa sistemáticamente antes de responder.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="note-box"><strong>Regla del 80/20:</strong> Usa Flash para el 80% de tus tareas. Reserva Pro y Razonamiento para el 20% que requiere profundidad y lógica avanzada.</div>
+            </article>
+
+            <!-- TARJETA 2: CRETA+R -->
+            <article class="card-large">
+                <div class="card-top-line"></div>
+                <div class="card-header-block">
+                    <div class="card-icon-big">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    </div>
+                    <h3 class="card-title-main">Marco CRETA+R</h3>
+                    <p class="card-intro-text">Construye tus prompts siguiendo este orden lógico de 6 elementos. Cada letra representa una capa que mejora la precisión y calidad de la respuesta.</p>
+                </div>
+                <div class="cretar-grid">
+                    <div class="cretar-block">
+                        <div class="cretar-letter-box"><span class="cretar-letter">C</span><span class="cretar-name">Contexto</span></div>
+                        <div class="cretar-desc">Situación de partida inicial.</div>
+                        <p class="cretar-example">"Soy profesor de Biología de 3º ESO en un colegio concertado con alumnos heterogéneos."</p>
+                    </div>
+                    <div class="cretar-block">
+                        <div class="cretar-letter-box"><span class="cretar-letter">R</span><span class="cretar-name">Rol</span></div>
+                        <div class="cretar-desc">Asigna una identidad experta.</div>
+                        <p class="cretar-example">"Actúa como un experto en didáctica de las ciencias con 15 años de experiencia en secundaria."</p>
+                    </div>
+                    <div class="cretar-block">
+                        <div class="cretar-letter-box"><span class="cretar-letter">E</span><span class="cretar-name">Ejemplos</span></div>
+                        <div class="cretar-desc">Muestras de lo que buscas.</div>
+                        <p class="cretar-example">"Quiero actividades de este tipo: [ejemplo]. Evita formatos cerrados tipo examen test."</p>
+                    </div>
+                    <div class="cretar-block">
+                        <div class="cretar-letter-box"><span class="cretar-letter">T</span><span class="cretar-name">Tarea</span></div>
+                        <div class="cretar-desc">Verbo de acción directo y claro.</div>
+                        <p class="cretar-example">"Redacta una secuencia de 3 actividades de indagación activa sobre la célula eucariota."</p>
+                    </div>
+                    <div class="cretar-block">
+                        <div class="cretar-letter-box"><span class="cretar-letter">A</span><span class="cretar-name">Ajustes</span></div>
+                        <div class="cretar-desc">Exclusiones y delimitaciones.</div>
+                        <p class="cretar-example">"Máximo 2 páginas. Sin tecnicismos. Incluye rúbrica. No utilices el libro de texto."</p>
+                    </div>
+                    <div class="cretar-block">
+                        <div class="cretar-letter-box"><span class="cretar-letter">R</span><span class="cretar-name">Refina</span></div>
+                        <div class="cretar-desc">Iteración continua del resultado.</div>
+                        <p class="cretar-example">"Hazlo más visual. Añade esquema inicial. Cambia la actividad 2 por una sobre mitosis."</p>
+                    </div>
+                </div>
+                <h4 class="card-sub-title">Plantilla universal de prompting</h4>
+                <div class="template-box">
+                    <div>✓ Actúa como un [ROL EXPERTO].</div>
+                    <div>✓ Mi objetivo es [CONTEXTO/OBJETIVO].</div>
+                    <div>✓ Tu tarea es [ACCIÓN ESPECÍFICA].</div>
+                    <div>✓ Debes cumplir los siguientes requisitos:</div>
+                    <div style="padding-left:15px">· [REQUISITO 1]</div>
+                    <div style="padding-left:15px">· [REQUISITO 2]</div>
+                    <div style="padding-left:15px">· [LO QUE NO DEBE HACER]</div>
+                    <div>✓ El resultado final debe ser [FORMATO DE SALIDA].</div>
+                </div>
+            </article>
+
+            <!-- TARJETA 3: EJEMPLO 1 -->
+            <a href="ejemplo1-prompting.html" class="card-link-wrapper">
+                <article class="card-placeholder">
+                    <div class="card-top-line"></div>
+                    <div class="card-header-block">
+                        <div class="card-icon-big">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10M10 3v5L4.2 19.4A2 2 0 0 0 6 22h12a2 2 0 0 0 1.8-2.6L14 8V3M8.5 12h7"/></svg>
+                        </div>
+                        <h3 class="card-title-main">Ejemplo 1 · Ciencias</h3>
+                    </div>
+                </article>
+            </a>
+
+            <!-- TARJETA 4: EJEMPLO 2 -->
+            <a href="ejemplo2-prompting.html" class="card-link-wrapper">
+                <article class="card-placeholder">
+                    <div class="card-top-line"></div>
+                    <div class="card-header-block">
+                        <div class="card-icon-big">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        </div>
+                        <h3 class="card-title-main">Ejemplo 2 · Infografía</h3>
+                    </div>
+                </article>
+            </a>
+
+            <!-- TARJETA 5: EJEMPLO 3 -->
+            <a href="ejemplo3-prompting.html" class="card-link-wrapper">
+                <article class="card-placeholder">
+                    <div class="card-top-line"></div>
+                    <div class="card-header-block">
+                        <div class="card-icon-big">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <h3 class="card-title-main">Ejemplo 3 · Familias</h3>
+                    </div>
+                </article>
+            </a>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div>
+            <div class="footer-school">Colegio de Fomento Aitana</div>
+            <div class="footer-info">Formación Interna · Google Workspace · 2025–26</div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('navbar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            window.addEventListener('scroll', () => {
+                navbar.classList.toggle('scrolled', window.scrollY > 20);
+            });
+            menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => navMenu.classList.remove('active')));
+        });
+    </script>
+</body>
+</html>

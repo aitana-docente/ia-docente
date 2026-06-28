@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 02: Producción con Gemini - IA Docente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-intro: #f1f3f5;
+            --bg-footer: #1a1d24;
+            --red-accent: #e03030;
+            --red-hover: #c22020;
+            --blue-accent: #4285f4;
+            --text-main: #1a1d24;
+            --text-muted: #5c6370;
+            --text-dark: #adb5bd;
+            --border-subtle: rgba(0,0,0,0.06);
+            --font-ui: 'Inter', sans-serif;
+            --font-body: 'Roboto', sans-serif;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body { background-color: var(--bg-main); color: var(--text-main); font-family: var(--font-body); margin: 0; padding: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        h1,h2,h3,h4 { font-family: var(--font-ui); }
+
+        /* NAVBAR */
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; z-index: 1000; background-color: rgba(248,249,250,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: background-color 0.3s ease, border-bottom 0.3s ease, box-shadow 0.3s ease; }
+        .navbar.scrolled { background-color: rgba(255,255,255,0.95); border-bottom: 1px solid var(--border-subtle); box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+        .nav-logo { font-size: 1.4rem; font-weight: 900; color: var(--text-main); text-decoration: none; letter-spacing: -0.5px; font-family: var(--font-ui); }
+        .nav-logo span { color: var(--red-accent); }
+        .nav-menu { display: flex; gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
+        .nav-link { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; font-family: var(--font-ui); transition: color 0.25s; }
+        .nav-link:hover { color: var(--red-accent); }
+        .nav-link.active-page { color: var(--blue-accent); }
+        .menu-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; }
+        .menu-toggle span { display: block; width: 25px; height: 2px; background-color: var(--text-main); }
+
+        /* HERO */
+        .hero-sub { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 120px 20px 50px; }
+        .badge-sub { background-color: rgba(66,133,244,0.08); color: var(--blue-accent); border: 1px solid rgba(66,133,244,0.2); padding: 4px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; font-family: var(--font-ui); letter-spacing: 0.5px; margin-bottom: 1rem; }
+        .hero-sub h1 { font-size: 2.5rem; font-weight: 900; line-height: 1.2; max-width: 800px; margin: 0 0 0.5rem; letter-spacing: -0.5px; }
+        .hero-sub h1 span { color: var(--blue-accent); }
+        .hero-sub p { font-size: 1.1rem; color: var(--text-muted); max-width: 650px; margin: 0; line-height: 1.5; }
+
+        /* INTRO WORKSPACE */
+        .workspace-section { background-color: var(--bg-intro); padding: 70px 5%; }
+        .workspace-inner { max-width: 1200px; margin: 0 auto; }
+        .workspace-header { text-align: center; margin-bottom: 3rem; }
+        .workspace-header h2 { font-size: 2rem; font-weight: 900; letter-spacing: -0.5px; margin: 0 0 0.5rem; }
+        .workspace-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        .tools-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 3rem; }
+        .tool-pill { background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.25rem 1rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.6rem; transition: transform 0.2s, box-shadow 0.2s; }
+        .tool-pill:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+        .tool-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .tool-name { font-family: var(--font-ui); font-weight: 700; font-size: 0.95rem; color: var(--text-main); }
+        .tool-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+
+        /* PDF DOWNLOAD */
+        .pdf-banner { background: linear-gradient(135deg, #1a1d24 0%, #2d3340 100%); border-radius: 14px; padding: 2rem 2.5rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+        .pdf-info { display: flex; align-items: center; gap: 1rem; }
+        .pdf-icon { width: 48px; height: 48px; background-color: rgba(66,133,244,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--blue-accent); flex-shrink: 0; }
+        .pdf-text h3 { font-family: var(--font-ui); font-weight: 700; font-size: 1rem; color: #fff; margin: 0 0 0.2rem; }
+        .pdf-text p { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin: 0; }
+        .btn-download { background-color: var(--blue-accent); color: #fff; padding: 11px 24px; border-radius: 8px; font-family: var(--font-ui); font-weight: 700; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; white-space: nowrap; }
+        .btn-download:hover { background-color: #2b6fd4; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(66,133,244,0.3); }
+
+        .franja-separator { width: 100%; height: 1px; background: linear-gradient(90deg, transparent 10%, var(--blue-accent) 50%, transparent 90%); opacity: 0.2; margin-top: 50px; }
+
+        /* CARDS GRID */
+        .content-section { padding: 80px 5%; max-width: 1300px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 3.5rem; }
+        .section-header h2 { font-size: 2rem; font-weight: 900; letter-spacing: -0.5px; margin: 0 0 0.5rem; }
+        .section-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 550px; margin: 0 auto; }
+
+        .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+
+        .card-link-wrapper { text-decoration: none; color: inherit; display: block; }
+        .card-example { background-color: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 2.5rem 1.75rem; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.02); height: 100%; }
+        .card-link-wrapper:hover .card-example { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(66,133,244,0.1); border-color: rgba(66,133,244,0.2); }
+
+        .card-top-line { position: absolute; top: 0; left: 0; width: 100%; height: 3px; opacity: 0; background-color: var(--blue-accent); transition: opacity 0.25s ease; }
+        .card-link-wrapper:hover .card-top-line { opacity: 1; }
+
+        .card-icon-big { color: var(--blue-accent); margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: center; height: 64px; width: 64px; }
+        .card-num { font-family: var(--font-ui); font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; color: var(--text-dark); margin-bottom: 0.75rem; }
+        .card-example h3 { font-size: 1.2rem; font-weight: 700; margin: 0; letter-spacing: -0.3px; line-height: 1.3; color: var(--text-main); }
+
+        /* FOOTER */
+        footer { background-color: var(--bg-footer); border-top: 2px solid var(--red-accent); padding: 40px 5%; text-align: center; margin-top: 60px; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+        .footer-logo { color: var(--red-accent); margin-bottom: 0.25rem; }
+        .footer-school { font-family: var(--font-ui); font-weight: 700; font-size: 1.1rem; color: #fff; }
+        .footer-info { color: rgba(255,255,255,0.4); font-size: 0.9rem; }
+
+        /* RESPONSIVE */
+        @media (max-width: 1023px) {
+            .cards-grid { grid-template-columns: repeat(2,1fr); }
+            .tools-grid { grid-template-columns: repeat(2,1fr); }
+        }
+        @media (max-width: 767px) {
+            .navbar { padding: 0 20px; background-color: #fff; }
+            .menu-toggle { display: flex; }
+            .nav-menu { position: absolute; top: 70px; left: 0; width: 100%; background-color: rgba(255,255,255,0.98); backdrop-filter: blur(16px); flex-direction: column; padding: 20px; gap: 1.25rem; border-bottom: 1px solid var(--border-subtle); display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+            .nav-menu.active { display: flex; }
+            .hero-sub h1 { font-size: 2rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .pdf-banner { flex-direction: column; align-items: flex-start; }
+            .tools-grid { grid-template-columns: repeat(2,1fr); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">IA <span>Docente</span></a>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="prompting.html" class="nav-link">Prompting</a></li>
+            <li><a href="gemini.html" class="nav-link active-page">Gemini</a></li>
+            <li><a href="notebooklm.html" class="nav-link">NotebookLM</a></li>
+            <li><a href="gems.html" class="nav-link">Gems</a></li>
+            <li><a href="imagenes.html" class="nav-link">Imágenes</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero-sub">
+        <div class="badge-sub">Módulo 02</div>
+        <h1>Producción con <span>Gemini</span></h1>
+        <p>Genera materiales educativos de calidad a partir de tus propios documentos usando Gemini y las herramientas de Google Workspace.</p>
+    </header>
+
+    <section class="workspace-section">
+        <div class="workspace-inner">
+            <div class="workspace-header">
+                <h2>IA integrada en Google Workspace</h2>
+                <p>Gemini no trabaja solo. Está integrado en todas las herramientas que ya usas cada día en el colegio, potenciando lo que ya sabes hacer.</p>
+            </div>
+
+            <div class="tools-grid">
+                <div class="tool-pill">
+                    <div class="tool-icon" style="background-color:rgba(66,133,244,0.1);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <div class="tool-name">Google Docs</div>
+                    <div class="tool-desc">Genera, resume y mejora documentos con Gemini integrado en el panel lateral.</div>
+                </div>
+                <div class="tool-pill">
+                    <div class="tool-icon" style="background-color:rgba(52,168,83,0.1);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34a853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                    </div>
+                    <div class="tool-name">Google Sheets</div>
+                    <div class="tool-desc">Crea tablas, fórmulas y analiza datos con ayuda de IA directamente en la hoja de cálculo.</div>
+                </div>
+                <div class="tool-pill">
+                    <div class="tool-icon" style="background-color:rgba(251,188,4,0.1);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f4a900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <div class="tool-name">Google Slides</div>
+                    <div class="tool-desc">Genera presentaciones completas a partir de un documento o tema con un solo prompt.</div>
+                </div>
+                <div class="tool-pill">
+                    <div class="tool-icon" style="background-color:rgba(234,67,53,0.1);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ea4335" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    </div>
+                    <div class="tool-name">Google Forms</div>
+                    <div class="tool-desc">Crea formularios y cuestionarios con preguntas y respuestas generadas automáticamente.</div>
+                </div>
+                <div class="tool-pill">
+                    <div class="tool-icon" style="background-color:rgba(66,133,244,0.1);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4285f4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    </div>
+                    <div class="tool-name">Gmail</div>
+                    <div class="tool-desc">Redacta, resume y responde correos profesionales con ayuda de Gemini.</div>
+                </div>
+                <div class="tool-pill">
+                    <div class="tool-icon" style="background-color:rgba(52,168,83,0.1);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34a853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+                    </div>
+                    <div class="tool-name">LearnLM</div>
+                    <div class="tool-desc">Modelo de IA educativa de Google, base del Aprendizaje Guiado y los Gems pedagógicos.</div>
+                </div>
+                <div class="tool-pill">
+                    <div class="tool-icon" style="background-color:rgba(52,168,83,0.1);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34a853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <div class="tool-name">Google Classroom</div>
+                    <div class="tool-desc">Distribuye tareas, cuestionarios y materiales generados con IA directamente a tus alumnos.</div>
+                </div>
+                <div class="tool-pill">
+                    <div class="tool-icon" style="background-color:rgba(251,188,4,0.1);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f4a900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3l-3 6 4 12 4-12z"/><path d="M2 9h20"/></svg>
+                    </div>
+                    <div class="tool-name">Gems</div>
+                    <div class="tool-desc">Asistentes de IA personalizados con instrucciones y rol definidos por el docente.</div>
+                </div>
+            </div>
+
+            <!-- PDF DOWNLOAD BANNER -->
+            <div class="pdf-banner">
+                <div class="pdf-info">
+                    <div class="pdf-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <div class="pdf-text">
+                        <h3>Documento de partida · Biología 3º ESO</h3>
+                        <p>Unidad 4 — Aparatos digestivo y respiratorio · Usa este PDF como base para los ejercicios de esta sección</p>
+                    </div>
+                </div>
+                <a href="Unidad_4_Digestivo_Respiratorio.pdf" download class="btn-download">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Descargar PDF
+                </a>
+            </div>
+
+            <div class="franja-separator"></div>
+        </div>
+    </section>
+
+    <main class="content-section">
+        <div class="section-header">
+            <h2>Productos que puedes generar</h2>
+            <p>Selecciona un ejemplo para ver las instrucciones paso a paso y el resultado esperado.</p>
+        </div>
+
+        <div class="cards-grid">
+
+            <!-- EJEMPLO 1: EJERCICIOS EN DOCS -->
+            <a href="ejemplo1-gemini.html" class="card-link-wrapper">
+                <div class="card-example">
+                    <div class="card-top-line"></div>
+                    <div class="card-num">EJEMPLO 01</div>
+                    <div class="card-icon-big">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                    </div>
+                    <h3>Ejercicios en Google Docs</h3>
+                </div>
+            </a>
+
+            <!-- EJEMPLO 2: FORMULARIO -->
+            <a href="ejemplo2-gemini.html" class="card-link-wrapper">
+                <div class="card-example">
+                    <div class="card-top-line"></div>
+                    <div class="card-num">EJEMPLO 02</div>
+                    <div class="card-icon-big">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    </div>
+                    <h3>Formulario en Google Forms</h3>
+                </div>
+            </a>
+
+            <!-- EJEMPLO 3: RESUMEN -->
+            <a href="ejemplo3-gemini.html" class="card-link-wrapper">
+                <div class="card-example">
+                    <div class="card-top-line"></div>
+                    <div class="card-num">EJEMPLO 03</div>
+                    <div class="card-icon-big">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+                    </div>
+                    <h3>Resumen en Google Docs</h3>
+                </div>
+            </a>
+
+            <!-- EJEMPLO 4: SLIDES -->
+            <a href="ejemplo4-gemini.html" class="card-link-wrapper">
+                <div class="card-example">
+                    <div class="card-top-line"></div>
+                    <div class="card-num">EJEMPLO 04</div>
+                    <div class="card-icon-big">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <h3>Presentación en Google Slides</h3>
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div>
+            <div class="footer-school">Colegio de Fomento Aitana</div>
+            <div class="footer-info">Formación Interna · Google Workspace · 2025–26</div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('navbar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 20));
+            menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => navMenu.classList.remove('active')));
+        });
+    </script>
+</body>
+</html>

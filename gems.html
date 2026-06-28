@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 04: Creación de Gems - IA Docente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f8f9fa; --bg-card: #ffffff; --bg-intro: #f1f3f5; --bg-footer: #1a1d24;
+            --red-accent: #e03030; --gem-accent: #7c3aed; --gem-hover: #6d28d9;
+            --gem-light: rgba(124,58,237,0.08); --gem-border: rgba(124,58,237,0.2);
+            --text-main: #1a1d24; --text-muted: #5c6370; --text-dark: #adb5bd;
+            --border-subtle: rgba(0,0,0,0.06); --font-ui: 'Inter',sans-serif; --font-body: 'Roboto',sans-serif;
+        }
+        *,*::before,*::after{box-sizing:border-box;}
+        html{scroll-behavior:smooth;font-size:16px;}
+        body{background-color:var(--bg-main);color:var(--text-main);font-family:var(--font-body);margin:0;padding:0;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+        h1,h2,h3,h4{font-family:var(--font-ui);}
+
+        /* NAVBAR */
+        .navbar{position:fixed;top:0;left:0;width:100%;height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;z-index:1000;background-color:rgba(248,249,250,0.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:background-color 0.3s,border-bottom 0.3s,box-shadow 0.3s;}
+        .navbar.scrolled{background-color:rgba(255,255,255,0.95);border-bottom:1px solid var(--border-subtle);box-shadow:0 4px 20px rgba(0,0,0,0.02);}
+        .nav-logo{font-size:1.4rem;font-weight:900;color:var(--text-main);text-decoration:none;letter-spacing:-0.5px;font-family:var(--font-ui);}
+        .nav-logo span{color:var(--red-accent);}
+        .nav-menu{display:flex;gap:1.5rem;list-style:none;margin:0;padding:0;}
+        .nav-link{color:var(--text-muted);text-decoration:none;font-size:0.9rem;font-weight:600;font-family:var(--font-ui);transition:color 0.25s;}
+        .nav-link:hover{color:var(--red-accent);}
+        .nav-link.active-page{color:var(--gem-accent);}
+        .menu-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:5px;}
+        .menu-toggle span{display:block;width:25px;height:2px;background-color:var(--text-main);}
+
+        /* HERO — igual que resto de secciones */
+        .hero-sub{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 20px 50px;}
+        .badge-sub{background-color:var(--gem-light);color:var(--gem-accent);border:1px solid var(--gem-border);padding:4px 12px;border-radius:50px;font-size:0.8rem;font-weight:700;font-family:var(--font-ui);letter-spacing:0.5px;margin-bottom:1rem;}
+        .hero-sub h1{font-size:2.5rem;font-weight:900;line-height:1.2;max-width:800px;margin:0 0 0.5rem;letter-spacing:-0.5px;color:var(--text-main);}
+        .hero-sub h1 span{color:var(--gem-accent);}
+        .hero-sub p{font-size:1.1rem;color:var(--text-muted);max-width:650px;margin:0;line-height:1.5;}
+
+        /* VALOR PEDAGÓGICO */
+        .valor-section{background-color:var(--bg-card);padding:60px 5%;}
+        .valor-inner{max-width:900px;margin:0 auto;}
+        .valor-card{display:flex;align-items:flex-start;gap:1.25rem;background-color:var(--gem-light);border:1px solid var(--gem-border);border-radius:14px;padding:1.75rem 2rem;}
+        .valor-icon{width:44px;height:44px;background-color:rgba(124,58,237,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gem-accent);flex-shrink:0;margin-top:2px;}
+        .valor-text h3{font-family:var(--font-ui);font-size:1.1rem;font-weight:700;color:var(--text-main);margin:0 0 0.6rem;}
+        .valor-text p{font-size:0.95rem;color:var(--text-muted);line-height:1.7;margin:0;}
+        .valor-text strong{color:var(--text-main);}
+
+        /* CASOS DE USO — centrados */
+        .casos-section{background-color:var(--bg-intro);padding:70px 5%;}
+        .casos-inner{max-width:1200px;margin:0 auto;}
+        .casos-header{text-align:center;margin-bottom:3rem;}
+        .casos-header h2{font-size:2rem;font-weight:900;letter-spacing:-0.5px;margin:0 0 0.5rem;}
+        .casos-header p{color:var(--text-muted);font-size:1.05rem;max-width:600px;margin:0 auto;line-height:1.6;}
+        .casos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;}
+        .caso-card{background-color:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;padding:1.75rem 1.5rem;transition:transform 0.2s,box-shadow 0.2s;display:flex;flex-direction:column;align-items:center;text-align:center;}
+        .caso-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(124,58,237,0.08);}
+        .caso-emoji{font-size:2.5rem;margin-bottom:0.9rem;display:block;line-height:1;}
+        .caso-title{font-family:var(--font-ui);font-weight:700;font-size:0.95rem;color:var(--gem-accent);margin-bottom:0.4rem;}
+        .caso-desc{font-size:0.88rem;color:var(--text-muted);line-height:1.55;max-width:240px;}
+
+        /* INSTRUCCIONES — IMPORTANCIA */
+        .instrucciones-section{background-color:var(--bg-card);padding:70px 5%;}
+        .instrucciones-inner{max-width:900px;margin:0 auto;}
+        .instrucciones-inner h2{font-size:2rem;font-weight:900;letter-spacing:-0.5px;margin:0 0 0.5rem;}
+        .instrucciones-inner>p{color:var(--text-muted);font-size:1rem;line-height:1.6;margin-bottom:2.5rem;}
+        .why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2.5rem;}
+        /* número grande, centrado verticalmente a la izquierda */
+        .why-item{display:flex;gap:1rem;align-items:center;background-color:var(--bg-intro);border-radius:10px;padding:1.25rem 1.5rem;}
+        .why-num{width:48px;height:48px;border-radius:50%;background-color:var(--gem-accent);color:#fff;font-family:var(--font-ui);font-weight:900;font-size:1.3rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .why-text h4{font-family:var(--font-ui);font-weight:700;font-size:0.95rem;color:var(--text-main);margin:0 0 0.3rem;}
+        .why-text p{font-size:0.88rem;color:var(--text-muted);line-height:1.55;margin:0;}
+
+        /* ESTRUCTURA INSTRUCCIONES — texto más grande */
+        .structure-box{background:linear-gradient(135deg,#2d1665 0%,#3b1fa8 100%);border-radius:14px;padding:2rem 2.5rem;margin-bottom:2.5rem;}
+        .structure-box h3{font-family:var(--font-ui);font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:1px;font-size:0.75rem;margin:0 0 1.5rem;}
+        .structure-items{display:flex;flex-direction:column;gap:1rem;}
+        .struct-item{display:flex;align-items:center;gap:1rem;}
+        .struct-tag{font-family:var(--font-ui);font-size:0.8rem;font-weight:700;background-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.9);padding:5px 12px;border-radius:4px;white-space:nowrap;letter-spacing:0.5px;}
+        .struct-desc{font-size:0.95rem;color:rgba(255,255,255,0.7);line-height:1.5;}
+
+        /* GEM DE EJEMPLO */
+        .gem-example-section{background-color:var(--bg-intro);padding:70px 5%;}
+        .gem-example-inner{max-width:900px;margin:0 auto;}
+        .gem-example-inner h2{font-size:2rem;font-weight:900;letter-spacing:-0.5px;margin:0 0 0.5rem;}
+        .gem-example-inner>p{color:var(--text-muted);font-size:1rem;line-height:1.6;margin-bottom:2rem;}
+
+        /* BANNER GEM LINK */
+        .gem-banner{background:linear-gradient(135deg,#2d1665 0%,#5b21b6 100%);border-radius:14px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;margin-bottom:2rem;}
+        .gem-banner-info{display:flex;align-items:center;gap:1rem;}
+        .gem-banner-icon{width:48px;height:48px;background-color:rgba(255,255,255,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;}
+        .gem-banner-text h3{font-family:var(--font-ui);font-weight:700;font-size:1rem;color:#fff;margin:0 0 0.2rem;}
+        .gem-banner-text p{font-size:0.85rem;color:rgba(255,255,255,0.55);margin:0;}
+        .btn-gem{background-color:#a855f7;color:#fff;padding:11px 24px;border-radius:8px;font-family:var(--font-ui);font-weight:700;font-size:0.9rem;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;white-space:nowrap;}
+        .btn-gem:hover{background-color:#9333ea;transform:translateY(-1px);box-shadow:0 4px 12px rgba(124,58,237,0.4);}
+
+        /* INSTRUCCIONES DE LA GEMA */
+        .gem-instructions{background-color:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;padding:2rem;margin-bottom:1rem;}
+        .gem-instructions h4{font-family:var(--font-ui);font-size:1rem;font-weight:700;color:var(--text-main);margin:0 0 1.25rem;border-bottom:1px solid var(--border-subtle);padding-bottom:0.75rem;}
+        .gem-block{margin-bottom:1.25rem;}
+        .gem-block-tag{font-family:var(--font-ui);font-size:0.72rem;font-weight:700;color:var(--gem-accent);letter-spacing:1.5px;margin-bottom:0.4rem;display:block;}
+        .gem-block-content{background-color:var(--bg-intro);border-left:3px solid var(--gem-accent);border-radius:0 8px 8px 0;padding:10px 14px;font-size:0.85rem;color:var(--text-main);line-height:1.6;white-space:pre-wrap;font-family:'Roboto Mono',monospace;}
+
+        /* TU TURNO — números grandes centrados verticalmente */
+        .turn-section{background-color:var(--bg-card);padding:70px 5%;}
+        .turn-inner{max-width:860px;margin:0 auto;}
+        .turn-header{margin-bottom:2.5rem;}
+        .turn-header h2{font-size:1.8rem;font-weight:900;margin-bottom:0.5rem;}
+        .turn-header p{color:var(--text-muted);font-size:1rem;line-height:1.6;}
+        .turn-steps{display:flex;flex-direction:column;gap:1.25rem;margin-bottom:2.5rem;}
+        .turn-step{display:flex;gap:1rem;align-items:center;background-color:var(--bg-intro);border:1px solid var(--border-subtle);border-radius:12px;padding:1.25rem 1.5rem;}
+        .turn-num{width:48px;height:48px;border-radius:50%;background-color:var(--gem-light);color:var(--gem-accent);font-family:var(--font-ui);font-weight:900;font-size:1.3rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--gem-border);}
+        .turn-content h4{font-size:1rem;font-weight:700;margin-bottom:0.3rem;color:var(--text-main);}
+        .turn-content p{font-size:0.92rem;color:var(--text-muted);line-height:1.55;margin:0;}
+        .step-note{margin-top:0.5rem;background-color:var(--gem-light);border-left:3px solid var(--gem-accent);border-radius:0 6px 6px 0;padding:8px 12px;font-size:0.88rem;color:var(--text-main);line-height:1.5;}
+        .ideas-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem;}
+        .idea-item{background-color:var(--bg-card);border:1px solid var(--border-subtle);border-radius:10px;padding:1rem;border-left:3px solid var(--gem-accent);}
+        .idea-item .idea-title{font-family:var(--font-ui);font-weight:700;font-size:0.85rem;color:var(--gem-accent);margin-bottom:0.3rem;}
+        .idea-item p{font-size:0.83rem;color:var(--text-muted);line-height:1.5;margin:0;}
+        .turn-cta{text-align:center;}
+        .btn-gem-big{background-color:var(--gem-accent);color:#fff;padding:14px 32px;border-radius:8px;font-family:var(--font-ui);font-weight:700;font-size:1rem;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;}
+        .btn-gem-big:hover{background-color:var(--gem-hover);transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,58,237,0.3);}
+
+        /* FOOTER */
+        footer{background-color:var(--bg-footer);border-top:2px solid var(--red-accent);padding:40px 5%;text-align:center;}
+        .footer-content{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:0.75rem;}
+        .footer-logo{color:var(--red-accent);margin-bottom:0.25rem;}
+        .footer-school{font-family:var(--font-ui);font-weight:700;font-size:1.1rem;color:#fff;}
+        .footer-info{color:rgba(255,255,255,0.4);font-size:0.9rem;}
+
+        /* RESPONSIVE */
+        @media(max-width:1023px){.casos-grid{grid-template-columns:repeat(2,1fr);}.ideas-row{grid-template-columns:1fr 1fr;}}
+        @media(max-width:767px){
+            .navbar{padding:0 20px;background-color:#fff;}.menu-toggle{display:flex;}
+            .nav-menu{position:absolute;top:70px;left:0;width:100%;background-color:rgba(255,255,255,0.98);backdrop-filter:blur(16px);flex-direction:column;padding:20px;gap:1.25rem;border-bottom:1px solid var(--border-subtle);display:none;box-shadow:0 10px 20px rgba(0,0,0,0.05);}
+            .nav-menu.active{display:flex;}
+            .hero-sub h1{font-size:2rem;}
+            .casos-grid{grid-template-columns:1fr;}.why-grid{grid-template-columns:1fr;}
+            .gem-banner{flex-direction:column;align-items:flex-start;}.ideas-row{grid-template-columns:1fr;}
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">IA <span>Docente</span></a>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="prompting.html" class="nav-link">Prompting</a></li>
+            <li><a href="gemini.html" class="nav-link">Gemini</a></li>
+            <li><a href="notebooklm.html" class="nav-link">NotebookLM</a></li>
+            <li><a href="gems.html" class="nav-link active-page">Gems</a></li>
+            <li><a href="imagenes.html" class="nav-link">Imágenes</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO — misma estética que resto de secciones -->
+    <header class="hero-sub">
+        <div class="badge-sub">Módulo 04</div>
+        <h1>Fábrica de <span>Gemas</span> Docentes</h1>
+        <p>Crea asistentes de IA personalizados que trabajan con tu propia metodología pedagógica. Configura una vez, ahorra cientos de horas.</p>
+    </header>
+
+    <!-- VALOR PEDAGÓGICO -->
+    <section class="valor-section">
+        <div class="valor-inner">
+            <div class="valor-card">
+                <div class="valor-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div class="valor-text">
+                    <h3>¿Por qué usar Gems? El valor pedagógico</h3>
+                    <p>En lugar de escribir un prompt larguísimo cada vez que abres Gemini, una Gema es una versión que <strong>ya tiene tus instrucciones grabadas en su "ADN"</strong>. Es ideal para tareas repetitivas de alto valor: evaluar redacciones con tu propia rúbrica, adaptar textos para alumnos con dislexia, o crear un tutor socrático que los alumnos puedan usar <strong>sin que les dé la respuesta directa</strong>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CASOS DE USO -->
+    <section class="casos-section">
+        <div class="casos-inner">
+            <div class="casos-header">
+                <h2>¿Qué puedes crear con una Gema?</h2>
+                <p>Una Gema puede ser cualquier asistente que necesites repetir. Estos son algunos ejemplos pensados para docentes:</p>
+            </div>
+            <div class="casos-grid">
+                <div class="caso-card">
+                    <span class="caso-emoji">📝</span>
+                    <div class="caso-title">Corrector de redacciones</div>
+                    <div class="caso-desc">Evalúa textos de alumnos con tu propia rúbrica de criterios, nivel y asignatura. Da retroalimentación constructiva sin dar la versión corregida.</div>
+                </div>
+                <div class="caso-card">
+                    <span class="caso-emoji">🧑‍🏫</span>
+                    <div class="caso-title">Tutor socrático</div>
+                    <div class="caso-desc">Responde preguntas de alumnos con contrapreguntas que les llevan a razonar la respuesta. Nunca da la solución directa.</div>
+                </div>
+                <div class="caso-card">
+                    <span class="caso-emoji">⚗️</span>
+                    <div class="caso-title">Generador de problemas</div>
+                    <div class="caso-desc">Crea colecciones de problemas adaptados al curso, materia y nivel de dificultad, con solución separada para el profesor.</div>
+                </div>
+                <div class="caso-card">
+                    <span class="caso-emoji">🌱</span>
+                    <div class="caso-title">Adaptador para ACNEAE</div>
+                    <div class="caso-desc">Reescribe cualquier texto o enunciado adaptado a alumnos con dislexia, TDAH o necesidades específicas de apoyo educativo.</div>
+                </div>
+                <div class="caso-card">
+                    <span class="caso-emoji">📧</span>
+                    <div class="caso-title">Redactor de comunicaciones</div>
+                    <div class="caso-desc">Genera correos a familias, partes disciplinarios o informes de tutoría con el tono formal y el estilo del centro.</div>
+                </div>
+                <div class="caso-card">
+                    <span class="caso-emoji">📊</span>
+                    <div class="caso-title">Generador de rúbricas</div>
+                    <div class="caso-desc">Diseña rúbricas de evaluación por competencias alineadas a los criterios de evaluación LOMLOE de tu materia y curso.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- POR QUÉ SON IMPORTANTES LAS INSTRUCCIONES -->
+    <section class="instrucciones-section">
+        <div class="instrucciones-inner">
+            <h2>La clave está en las instrucciones</h2>
+            <p>Una Gema es tan buena como las instrucciones que le das. <strong>La calidad de la salida de Gemini es directamente proporcional a la calidad, el contexto y la estructura de la entrada.</strong> Cuanto más precisas, completas y bien estructuradas sean tus instrucciones, más consistente y útil será la Gema en cada uso.</p>
+
+            <div class="why-grid">
+                <div class="why-item">
+                    <div class="why-num">1</div>
+                    <div class="why-text">
+                        <h4>Elimina la ambigüedad</h4>
+                        <p>Sin instrucciones claras, la IA rellena los huecos con suposiciones. Unas instrucciones precisas eliminan ese margen de error y garantizan respuestas coherentes.</p>
+                    </div>
+                </div>
+                <div class="why-item">
+                    <div class="why-num">2</div>
+                    <div class="why-text">
+                        <h4>Define el rol con exactitud</h4>
+                        <p>Decirle a la Gema quién es (experto en didáctica, tutor socrático, corrector…) cambia drásticamente el tono, el vocabulario y la profundidad de sus respuestas.</p>
+                    </div>
+                </div>
+                <div class="why-item">
+                    <div class="why-num">3</div>
+                    <div class="why-text">
+                        <h4>Las restricciones son tan importantes como las órdenes</h4>
+                        <p>Indicar qué NO debe hacer la Gema (no dar la respuesta directa, no usar tecnicismos, no generar más de X ítems) es tan crucial como lo que SÍ debe hacer.</p>
+                    </div>
+                </div>
+                <div class="why-item">
+                    <div class="why-num">4</div>
+                    <div class="why-text">
+                        <h4>Consistencia en el tiempo</h4>
+                        <p>Una Gema bien instruida trabaja igual en cada conversación. Sin instrucciones permanentes, cada sesión con Gemini empieza desde cero.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="structure-box">
+                <h3>ESTRUCTURA RECOMENDADA PARA LAS INSTRUCCIONES DE UNA GEMA</h3>
+                <div class="structure-items">
+                    <div class="struct-item">
+                        <span class="struct-tag">[ROL]</span>
+                        <span class="struct-desc">Quién es la Gema y qué perfil de experto tiene. Define el tono y la profundidad técnica.</span>
+                    </div>
+                    <div class="struct-item">
+                        <span class="struct-tag">[OBJETIVO]</span>
+                        <span class="struct-desc">Qué debe conseguir en cada conversación. El propósito central de la Gema.</span>
+                    </div>
+                    <div class="struct-item">
+                        <span class="struct-tag">[FLUJO]</span>
+                        <span class="struct-desc">Cómo debe comportarse: qué preguntar primero, en qué orden actuar, cuándo esperar input del usuario.</span>
+                    </div>
+                    <div class="struct-item">
+                        <span class="struct-tag">[FORMATO DE SALIDA]</span>
+                        <span class="struct-desc">Cómo debe presentar los resultados: secciones, tablas, listas, extensión máxima, idioma.</span>
+                    </div>
+                    <div class="struct-item">
+                        <span class="struct-tag">[RESTRICCIONES]</span>
+                        <span class="struct-desc">Lo que la Gema NO debe hacer bajo ningún concepto. Las líneas que no puede cruzar.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GEMA DE EJEMPLO -->
+    <section class="gem-example-section">
+        <div class="gem-example-inner">
+            <h2>Gema de ejemplo · Generador de Problemas de FyQ</h2>
+            <p>Esta Gema ya está creada y disponible. Accede a ella directamente o lee sus instrucciones para entender cómo está construida y usarla como modelo para crear la tuya.</p>
+
+            <div class="gem-banner">
+                <div class="gem-banner-info">
+                    <div class="gem-banner-icon">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3l-3 6 4 12 4-12z"/><path d="M2 9h20"/></svg>
+                    </div>
+                    <div class="gem-banner-text">
+                        <h3>Generador Interactivo de Problemas · Física y Química</h3>
+                        <p>Gema para crear colecciones de problemas adaptados al curso, nivel y materia — con hoja del alumno y resolución para el profesor</p>
+                    </div>
+                </div>
+                <a href="https://gemini.google.com/gem/1gnck6Sv4RMCbVznG0TwNrb6509CTislh?usp=sharing" target="_blank" class="btn-gem">
+                    Abrir la Gema
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+            </div>
+
+            <div class="gem-instructions">
+                <h4>Instrucciones completas de la Gema</h4>
+
+                <div class="gem-block">
+                    <span class="gem-block-tag">[ROL]</span>
+                    <div class="gem-block-content">Eres un Experto en Didáctica de las Ciencias (Física y Química) y un especialista en el diseño de situaciones de aprendizaje bajo el marco normativo de la LOMLOE para la Comunidad Valenciana (Decretos de ordenación y enseñanzas mínimas 2022/2023).</div>
+                </div>
+
+                <div class="gem-block">
+                    <span class="gem-block-tag">[OBJETIVO PRINCIPAL]</span>
+                    <div class="gem-block-content">Tu objetivo es actuar como un "Generador Interactivo de Problemas" para profesores de Secundaria y Bachillerato. No debes generar problemas inmediatamente. Tu primera tarea es siempre interactuar con el usuario para recopilar los parámetros exactos de generación.</div>
+                </div>
+
+                <div class="gem-block">
+                    <span class="gem-block-tag">[FLUJO DE INTERACCIÓN — FASE 1: RECOPILACIÓN DE DATOS]</span>
+                    <div class="gem-block-content">Inicia la conversación saludando al profesor y solicitando que defina los siguientes parámetros en una lista numerada:
+
+1. Etapa (Secundaria o Bachillerato)
+2. Curso específico (ej. 2º ESO, 1º Bachillerato)
+3. Materia (Física y Química, Física, o Química)
+4. Unidad didáctica o bloque de contenidos
+5. Nivel de dificultad (Bajo, Medio, Alto, o Reto/Olimpiada)
+6. Formato:
+   · Opción A: Problemas tradicionales de lápiz y papel
+   · Opción B: Aprendizaje Basado en Contexto (situaciones cotidianas reales)
+7. Número de problemas a generar
+8. Formato de ecuaciones:
+   · Opción 1: Unicode (caracteres nativos m/s², H₂O)
+   · Opción 2: LaTeX (para complementos de Google Docs)
+   · Opción 3: Atajos del editor nativo de Docs
+9. Material de referencia: indica que puede subir apuntes o programación
+
+IMPORTANTE: Detente aquí y espera respuesta antes de generar nada.</div>
+                </div>
+
+                <div class="gem-block">
+                    <span class="gem-block-tag">[ESTRUCTURA DE SALIDA OBLIGATORIA]</span>
+                    <div class="gem-block-content">--- HOJA 1: PARA EL ALUMNO ---
+· Enunciados numerados con respuesta final entre paréntesis al final.
+  Ejemplo: "(Solución: 45 N)"
+
+--- HOJA 2: PARA EL PROFESOR (RESOLUCIÓN) ---
+· Resolución paso a paso con fórmulas, despejes y justificación pedagógica breve.</div>
+                </div>
+
+                <div class="gem-block">
+                    <span class="gem-block-tag">[RESTRICCIONES]</span>
+                    <div class="gem-block-content">· Nivel matemático exacto al curso solicitado (Comunidad Valenciana)
+· Generar exactamente la cantidad de problemas del punto 7
+· Opción B: protagonistas con la misma edad o ligeramente mayores que los alumnos del curso
+  (un alumno de 3º ESO no conduce un coche — usa bicicletas, trenes, situaciones acordes)
+· Adaptar estrictamente el formato de ecuaciones según lo elegido en el punto 8</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TU TURNO -->
+    <section class="turn-section">
+        <div class="turn-inner">
+            <div class="turn-header">
+                <span style="font-family:var(--font-ui);font-size:0.75rem;font-weight:700;color:var(--gem-accent);letter-spacing:1px;display:block;margin-bottom:0.5rem;">TU TURNO</span>
+                <h2>Crea tu propia Gema</h2>
+                <p>Ahora que has visto cómo está construida una Gema real, es tu momento. Elige una tarea que repitas frecuentemente y crea tu propio asistente personalizado:</p>
+            </div>
+            <div class="turn-steps">
+                <div class="turn-step">
+                    <div class="turn-num">1</div>
+                    <div class="turn-content">
+                        <h4>Identifica la tarea que quieres automatizar</h4>
+                        <p>Piensa en algo que haces repetidamente: corregir con una rúbrica concreta, generar ejercicios de tu materia, adaptar textos, comunicarte con familias…</p>
+                        <div class="step-note">💡 La mejor Gema es la que resuelve un problema real tuyo, no una genérica. Cuanto más específica, más útil.</div>
+                    </div>
+                </div>
+                <div class="turn-step">
+                    <div class="turn-num">2</div>
+                    <div class="turn-content">
+                        <h4>Escribe las instrucciones usando la estructura [ROL] · [OBJETIVO] · [FLUJO] · [FORMATO] · [RESTRICCIONES]</h4>
+                        <p>Usa la estructura de la Gema de ejemplo como plantilla. No hace falta que sea larga — lo importante es que sea precisa y sin ambigüedades.</p>
+                        <div class="step-note">✏️ Truco: Pregunta a Gemini <em>"Ayúdame a escribir las instrucciones para una Gema que..."</em> y describe tu tarea. Gemini te ayudará a estructurarlas correctamente.</div>
+                    </div>
+                </div>
+                <div class="turn-step">
+                    <div class="turn-num">3</div>
+                    <div class="turn-content">
+                        <h4>Crea la Gema en Gemini</h4>
+                        <p>Ve a <strong>gemini.google.com</strong>, pulsa <strong>"Explorar Gems"</strong> en el menú lateral y después <strong>"Crear Gem"</strong>. Pega tus instrucciones, dale un nombre descriptivo y guárdala.</p>
+                        <div class="step-note">🔁 Pruébala con un caso real y refínala: ajusta las instrucciones según lo que funcione o no en la primera prueba.</div>
+                    </div>
+                </div>
+            </div>
+
+            <p style="font-family:var(--font-ui);font-size:0.8rem;font-weight:700;color:var(--gem-accent);letter-spacing:1px;text-align:center;margin-bottom:1.25rem;">IDEAS PARA TU PRIMERA GEMA</p>
+            <div class="ideas-row">
+                <div class="idea-item">
+                    <div class="idea-title">📐 Matemáticas / FyQ</div>
+                    <p>Generador de ejercicios graduados por nivel para una unidad concreta de tu programación.</p>
+                </div>
+                <div class="idea-item">
+                    <div class="idea-title">📖 Lengua / Idiomas</div>
+                    <p>Corrector de redacciones que evalúa cohesión, coherencia y ortografía con una rúbrica propia.</p>
+                </div>
+                <div class="idea-item">
+                    <div class="idea-title">🌍 Historia / Geografía</div>
+                    <p>Tutor socrático que ayuda al alumno a analizar una fuente histórica con preguntas guiadas.</p>
+                </div>
+            </div>
+
+            <div class="turn-cta" style="margin-top:2.5rem;">
+                <a href="https://gemini.google.com" target="_blank" class="btn-gem-big">
+                    Abrir Gemini y crear mi Gema
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div>
+            <div class="footer-school">Colegio de Fomento Aitana</div>
+            <div class="footer-info">Formación Interna · Google Workspace · 2025–26</div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('navbar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 20));
+            menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => navMenu.classList.remove('active')));
+        });
+    </script>
+</body>
+</html>
