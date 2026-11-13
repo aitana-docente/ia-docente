@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robótica · Secundaria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23e03030%22/%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%224.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2213%22%20y%3D%2224%22%20width%3D%2238%22%20height%3D%2228%22%20rx%3D%228%22/%3E%3Cline%20x1%3D%2232%22%20y1%3D%2224%22%20x2%3D%2232%22%20y2%3D%2213%22/%3E%3C/g%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2210.5%22%20r%3D%224%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2238%22%20r%3D%223.6%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2238%22%20r%3D%223.6%22%20fill%3D%22%23fff%22/%3E%3C/svg%3E"><link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+<style>
+:root{--bg-main:#f8f9fa;--bg-card:#fff;--bg-intro:#f1f3f5;--bg-footer:#1a1d24;--red-accent:#e03030;--text-main:#1a1d24;--text-muted:#5c6370;--text-dark:#adb5bd;--border-subtle:rgba(0,0,0,0.06);--font-ui:'Inter',sans-serif;--font-body:'Roboto',sans-serif;--acc:#e03030;--acc-rgb:224,48,48;}
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{background:var(--bg-main);color:var(--text-main);font-family:var(--font-body);margin:0;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+h1,h2,h3,h4{font-family:var(--font-ui);}
+.navbar{position:fixed;top:0;left:0;width:100%;height:70px;display:flex;align-items:center;justify-content:center;padding:0 5%;z-index:1000;background:rgba(248,249,250,0.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:all .3s;}
+.navbar.scrolled{background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border-subtle);box-shadow:0 4px 20px rgba(0,0,0,0.02);}
+.nav-logo{font-size:1.4rem;font-weight:900;color:var(--text-main);text-decoration:none;letter-spacing:-0.5px;font-family:var(--font-ui);}
+.nav-logo span{color:var(--red-accent);}
+.nav-menu{display:flex;gap:1.5rem;list-style:none;margin:0;padding:0;}
+.nav-link{color:var(--text-muted);text-decoration:none;font-size:0.9rem;font-weight:600;font-family:var(--font-ui);transition:color .25s;}
+.nav-link:hover{color:var(--red-accent);}
+.nav-link.active-page{color:var(--acc);}
+.menu-toggle{display:none;margin-left:auto;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:5px;}
+.menu-toggle span{display:block;width:25px;height:2px;background:var(--text-main);}
+.hero-sub{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 20px 50px;}
+.badge-sub{background:rgba(var(--acc-rgb),0.08);color:var(--acc);border:1px solid rgba(var(--acc-rgb),0.2);padding:4px 12px;border-radius:50px;font-size:0.8rem;font-weight:700;font-family:var(--font-ui);letter-spacing:.5px;margin-bottom:1rem;}
+.hero-sub h1{font-size:2.5rem;font-weight:900;line-height:1.2;max-width:800px;margin:0 0 .5rem;letter-spacing:-.5px;}
+.hero-sub h1 span{color:var(--acc);}
+.hero-sub p{font-size:1.1rem;color:var(--text-muted);max-width:650px;margin:0;line-height:1.5;}
+.content-section{padding:30px 5% 80px;max-width:1100px;margin:0 auto;}
+.section-header{text-align:center;margin-bottom:3rem;}
+.section-header h2{font-size:2rem;font-weight:900;letter-spacing:-.5px;margin:0 0 .5rem;}
+.section-header p{color:var(--text-muted);font-size:1.05rem;max-width:560px;margin:0 auto;}
+footer{background:var(--bg-footer);border-top:2px solid var(--red-accent);padding:40px 5%;text-align:center;}
+.footer-content{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:.75rem;}
+.footer-logo{color:var(--red-accent);}
+.footer-school{font-family:var(--font-ui);font-weight:700;font-size:1.1rem;color:#fff;}
+.footer-info{color:rgba(255,255,255,0.4);font-size:.9rem;}
+@media(max-width:767px){.navbar{padding:0 20px;background:#fff;}.menu-toggle{display:flex;}.nav-menu{position:absolute;top:70px;left:0;width:100%;background:rgba(255,255,255,0.98);flex-direction:column;padding:20px;gap:1.25rem;border-bottom:1px solid var(--border-subtle);display:none;box-shadow:0 10px 20px rgba(0,0,0,0.05);}.nav-menu.active{display:flex;}.hero-sub h1{font-size:2rem;}}
+
+.eq-img{position:relative;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.eq-img .ph{color:var(--acc);opacity:.55;display:flex;align-items:center;justify-content:center;}
+.eq-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:14px;background:#fff;opacity:0;transition:opacity .3s;}
+.eq-img img.ok{opacity:1;}
+
+.hs{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:78px 20px 4px;}
+.hs .badge-sub{margin-bottom:.35rem;}
+.hs h1{font-size:1.9rem;font-weight:900;line-height:1.15;margin:0;letter-spacing:-.5px;}
+.hs h1 span{color:var(--acc);}
+.back-top{position:absolute;left:5%;top:84px;border:1px solid var(--border-subtle);background:#fff;color:var(--text-muted);padding:8px 18px;border-radius:8px;font-family:var(--font-ui);font-weight:600;font-size:.88rem;text-decoration:none;transition:all .2s;}
+.back-top:hover{border-color:var(--acc);color:var(--acc);}
+.stage-main{padding:0 5% 28px;}
+.orbit-outer{width:100%;position:relative;}
+.orbit-stage{position:relative;margin:0;left:50%;transform-origin:50% 0;}
+.orbit{position:absolute;inset:0;animation:spin 140s linear infinite;}
+.shape{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.center-ico{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--acc);opacity:.13;pointer-events:none;}
+.slot{position:absolute;width:160px;transform:translate(-50%,-50%);}
+.counter{animation:spin 140s linear infinite reverse;}
+.float{animation:bob 5s ease-in-out infinite;}
+.orbit-stage:hover .orbit,.orbit-stage:hover .counter{animation-play-state:paused;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes bob{0%,100%{transform:translateY(-6px);}50%{transform:translateY(6px);}}
+.eq-link{text-decoration:none;color:inherit;display:block;width:100%;}
+.eq-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:14px;overflow:hidden;position:relative;height:100%;display:flex;flex-direction:column;box-shadow:0 8px 24px rgba(var(--acc-rgb),0.12);transition:transform .25s,box-shadow .25s,border-color .25s;}
+.eq-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:3px;background:var(--acc);opacity:0;transition:opacity .25s;z-index:2;}
+.eq-link:hover .eq-card{transform:scale(1.07);box-shadow:0 14px 34px rgba(var(--acc-rgb),0.22);border-color:rgba(var(--acc-rgb),0.35);}
+.eq-link:hover .eq-card::before{opacity:1;}
+.eq-card .eq-img{height:110px;border-bottom:1px solid var(--border-subtle);}
+.eq-body{padding:.5rem .6rem .7rem;text-align:center;display:flex;align-items:center;justify-content:center;min-height:56px;}
+.eq-body h3{font-size:.9rem;font-weight:800;margin:0;line-height:1.28;}
+@media(max-width:700px){
+ .back-top{position:static;display:inline-block;margin-bottom:.8rem;}
+ .hs{padding-top:84px;}
+ .orbit-outer{height:auto!important;}
+ .orbit-stage{width:auto!important;height:auto!important;transform:none!important;left:auto!important;margin:0!important;display:flex;flex-direction:column;gap:1.5rem;align-items:center;}
+ .orbit{position:static;animation:none;display:contents;}
+ .shape,.center-ico{display:none;}
+ .slot{position:static;transform:none;width:100%;max-width:300px;}
+ .counter,.float{animation:none;}
+ .eq-card .eq-img{height:150px;}
+ .eq-body h3{font-size:1.05rem;}
+}
+@media(prefers-reduced-motion:reduce){.orbit,.counter,.float{animation:none!important;}}
+:root{--acc:#7c3aed;--acc-rgb:124,58,237;}</style></head><body><nav class="navbar" id="navbar">
+<button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+<ul class="nav-menu" id="nav-menu"><li><a href="infantil.html" class="nav-link">Infantil</a></li><li><a href="primaria.html" class="nav-link">Primaria</a></li><li><a href="secundaria.html" class="nav-link active-page">Secundaria</a></li></ul></nav>
+<header class="hs"><a href="index.html" class="back-top">← Volver a la página principal</a><div class="badge-sub">Etapa 3</div><h1>Equipos de <span>Secundaria</span></h1></header>
+<main class="stage-main"><div class="orbit-outer" id="outer"><div class="orbit-stage" id="stage" data-size="598" style="width:598px;height:598px;margin-left:-299px"><div class="center-ico"><svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 2v5M14 2v5M10 17v5M14 17v5M2 10h5M2 14h5M17 10h5M17 14h5"/><circle cx="12" cy="12" r="1.5"/></svg></div><div class="orbit"><svg class="shape" viewBox="0 0 598 598"><circle cx="299.0" cy="299.0" r="205" fill="rgba(124,58,237,0.04)" stroke="rgba(124,58,237,0.35)" stroke-width="2" stroke-dasharray="6 10"/></svg><div class="slot" style="left:299.0px;top:94.0px"><div class="counter"><div class="float" style="animation-delay:0.0s"><a class="eq-link" href="equipo-microbit-placas.html?etapa=secundaria"><div class="eq-card"><div class="eq-img "><span class="ph"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg></span><img alt="Kit de placas programables Micro:bit" referrerpolicy="no-referrer" data-srcs="imagenes/microbit-placas.jpg|imagenes/microbit-placas.png|https://www.sparkfun.com/media/catalog/product/cache/f3020b7489dcfc4d1d147cf4dad07b7f/1/7/17287-micro-bit_2.0_Board-01.jpg"></div><div class="eq-body"><h3>Kit de placas programables Micro:bit</h3></div></div></a></div></div></div><div class="slot" style="left:494.0px;top:235.7px"><div class="counter"><div class="float" style="animation-delay:-1.3s"><a class="eq-link" href="equipo-microbit-componentes.html?etapa=secundaria"><div class="eq-card"><div class="eq-img "><span class="ph"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 2v5M14 2v5M10 17v5M14 17v5M2 10h5M2 14h5M17 10h5M17 14h5"/><circle cx="12" cy="12" r="1.5"/></svg></span><img alt="Equipo de componentes para Micro:bit" referrerpolicy="no-referrer" data-srcs="imagenes/microbit-componentes.jpg|imagenes/microbit-componentes.png"></div><div class="eq-body"><h3>Equipo de componentes para Micro:bit</h3></div></div></a></div></div></div><div class="slot" style="left:419.5px;top:464.8px"><div class="counter"><div class="float" style="animation-delay:-2.6s"><a class="eq-link" href="equipo-maqueen.html?etapa=secundaria"><div class="eq-card"><div class="eq-img "><span class="ph"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"/><line x1="12" y1="8" x2="12" y2="4"/><circle cx="12" cy="3" r="1"/><circle cx="9" cy="14" r="1.2"/><circle cx="15" cy="14" r="1.2"/></svg></span><img alt="Robot móvil programable Maqueen" referrerpolicy="no-referrer" data-srcs="imagenes/maqueen.jpg|imagenes/maqueen.png|https://mm.digikey.com/Volume0/opasdata/d220001/medias/images/697/MFG_ROB0148.jpg"></div><div class="eq-body"><h3>Robot móvil programable Maqueen</h3></div></div></a></div></div></div><div class="slot" style="left:178.5px;top:464.8px"><div class="counter"><div class="float" style="animation-delay:-3.9s"><a class="eq-link" href="equipo-nezha-inventor-kit.html?etapa=secundaria"><div class="eq-card"><div class="eq-img "><span class="ph"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8l-9-5-9 5v8l9 5z"/><polyline points="3.3 7 12 12 20.7 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></span><img alt="Inventor Kit Nezha para Micro:bit" referrerpolicy="no-referrer" data-srcs="imagenes/nezha-inventor-kit.jpg|imagenes/nezha-inventor-kit.png|https://wiki-media-ef.oss-cn-hongkong.aliyuncs.com/i18n/en/docusaurus-plugin-content-docs/current/microbit/building-blocks/nezha-inventors-kit-v2/images/nezha-inventors-kit-v2-01.png"></div><div class="eq-body"><h3>Inventor Kit Nezha para Micro:bit</h3></div></div></a></div></div></div><div class="slot" style="left:104.0px;top:235.7px"><div class="counter"><div class="float" style="animation-delay:-5.2s"><a class="eq-link" href="equipo-cortadora-laser.html?etapa=secundaria"><div class="eq-card"><div class="eq-img "><span class="ph"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></span><img alt="Cortadora láser y purificador de aire" referrerpolicy="no-referrer" data-srcs="imagenes/cortadora-laser.jpg|imagenes/cortadora-laser.png"></div><div class="eq-body"><h3>Cortadora láser y purificador de aire</h3></div></div></a></div></div></div></div></div></div></main><footer><div class="footer-content"><div class="footer-logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg></div>
+<div class="footer-school">Colegio de Fomento Aitana</div><div class="footer-info">Departamento de Robótica · Inventario de equipos</div></div></footer>
+<script>document.addEventListener('DOMContentLoaded',function(){var n=document.getElementById('navbar'),t=document.getElementById('menu-toggle'),m=document.getElementById('nav-menu');
+if(n)window.addEventListener('scroll',function(){n.classList.toggle('scrolled',window.scrollY>20);});
+if(t&&m)t.addEventListener('click',function(){m.classList.toggle('active');});
+var q=document.getElementById('search');
+if(q){q.addEventListener('input',function(){var v=q.value.toLowerCase();document.querySelectorAll('.eq-card').forEach(function(c){c.style.display=c.dataset.text.indexOf(v)>-1?'':'none';});});}
+});</script>
+<script>
+document.querySelectorAll('.eq-img img').forEach(function(img){
+  var list=(img.dataset.srcs||'').split('|').filter(Boolean),i=0;
+  function next(){ if(i<list.length){img.src=list[i++];} else {img.remove();} }
+  img.addEventListener('load',function(){img.classList.add('ok');});
+  img.addEventListener('error',next);
+  next();
+});
+</script><script>
+(function(){
+ var o=document.getElementById('outer'),s=document.getElementById('stage'),S=+s.getAttribute('data-size');
+ function fit(){
+  if(window.innerWidth<=700){s.style.transform='';o.style.height='';return;}
+  var top=o.getBoundingClientRect().top+window.pageYOffset;
+  var k=Math.min(1.3,o.clientWidth/S,(window.innerHeight-top-6)/S);
+  k=Math.max(k,0.4);
+  s.style.transform='scale('+k+')'; o.style.height=(S*k)+'px';
+ }
+ window.addEventListener('resize',fit); window.addEventListener('load',fit); fit();
+})();
+</script></body></html>
